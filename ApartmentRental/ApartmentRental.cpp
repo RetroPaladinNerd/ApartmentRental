@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// Класс Квартира
+// Class Apartment
 class Apartment {
 private:
     string address;
@@ -13,132 +13,302 @@ private:
     bool isAvailable;
 
 public:
-    // Конструктор
+    // Constructor
     Apartment(string address, int rooms, double rent)
         : address(address), rooms(rooms), rent(rent), isAvailable(true) {}
 
-    // Функция получения информации о квартире
+    // Function to show apartment info
     void showInfo() const {
-        cout << "Адрес: " << address << endl;
-        cout << "Комнат: " << rooms << endl;
-        cout << "Аренда: " << rent << endl;
-        cout << "Доступность: " << (isAvailable ? "Доступна" : "Занята") << endl;
+        cout << "Address: " << address << endl;
+        cout << "Rooms: " << rooms << endl;
+        cout << "Rent: " << rent << endl;
+        cout << "Availability: " << (isAvailable ? "Available" : "Rented") << endl;
     }
 
-    // Получение статуса доступности
-    bool getAvailability() const {
-        return isAvailable;
-    }
+    // Getters and setters for CRUD operations
+    string getAddress() const { return address; }
+    void setAddress(const string& newAddress) { address = newAddress; }
 
-    // Изменение статуса квартиры на занятую
+    int getRooms() const { return rooms; }
+    void setRooms(int newRooms) { rooms = newRooms; }
+
+    double getRent() const { return rent; }
+    void setRent(double newRent) { rent = newRent; }
+
+    bool getAvailability() const { return isAvailable; }
+
+    // Rent the apartment
     void rentApartment() {
         if (isAvailable) {
             isAvailable = false;
-            cout << "Квартира по адресу " << address << " арендована." << endl;
+            cout << "Apartment at " << address << " has been rented." << endl;
         }
         else {
-            cout << "Квартира по адресу " << address << " уже занята." << endl;
+            cout << "Apartment at " << address << " is already rented." << endl;
         }
     }
 
-    // Освобождение квартиры
+    // Free the apartment
     void freeApartment() {
         isAvailable = true;
-        cout << "Квартира по адресу " << address << " снова доступна для аренды." << endl;
+        cout << "Apartment at " << address << " is now available for rent." << endl;
     }
 };
 
-// Класс Арендатор
+// Class Tenant
 class Tenant {
 private:
     string name;
     string phoneNumber;
 
 public:
-    // Конструктор
+    // Constructor
     Tenant(string name, string phoneNumber) : name(name), phoneNumber(phoneNumber) {}
 
-    // Функция получения информации об арендаторе
+    // Function to show tenant info
     void showInfo() const {
-        cout << "Имя арендатора: " << name << endl;
-        cout << "Телефон: " << phoneNumber << endl;
+        cout << "Tenant Name: " << name << endl;
+        cout << "Phone: " << phoneNumber << endl;
     }
+
+    // Getters and setters for CRUD operations
+    string getName() const { return name; }
+    void setName(const string& newName) { name = newName; }
+
+    string getPhoneNumber() const { return phoneNumber; }
+    void setPhoneNumber(const string& newPhoneNumber) { phoneNumber = newPhoneNumber; }
 };
 
-// Класс Система аренды
+// Class RentalSystem
 class RentalSystem {
 private:
     vector<Apartment> apartments;
     vector<Tenant> tenants;
 
 public:
-    // Добавление квартиры в систему
-    void addApartment(const Apartment& apartment) {
-        apartments.push_back(apartment);
-        cout << "Квартира добавлена в систему." << endl;
+    // Create: Add a new apartment
+    void addApartment() {
+        string address;
+        int rooms;
+        double rent;
+        cout << "Enter apartment address: ";
+        cin.ignore(); // To clear input buffer
+        getline(cin, address);
+        cout << "Enter number of rooms: ";
+        cin >> rooms;
+        cout << "Enter rent price: ";
+        cin >> rent;
+
+        apartments.push_back(Apartment(address, rooms, rent));
+        cout << "Apartment added successfully.\n";
     }
 
-    // Добавление арендатора в систему
-    void addTenant(const Tenant& tenant) {
-        tenants.push_back(tenant);
-        cout << "Арендатор добавлен в систему." << endl;
+    // Create: Add a new tenant
+    void addTenant() {
+        string name, phoneNumber;
+        cout << "Enter tenant name: ";
+        cin.ignore();
+        getline(cin, name);
+        cout << "Enter tenant phone number: ";
+        getline(cin, phoneNumber);
+
+        tenants.push_back(Tenant(name, phoneNumber));
+        cout << "Tenant added successfully.\n";
     }
 
-    // Показать все квартиры
+    // Read: Show all apartments
     void showAllApartments() const {
+        if (apartments.empty()) {
+            cout << "No apartments available.\n";
+            return;
+        }
         for (const auto& apartment : apartments) {
             apartment.showInfo();
             cout << "------------------------" << endl;
         }
     }
 
-    // Аренда квартиры
-    void rentApartment(int index) {
+    // Read: Show all tenants
+    void showAllTenants() const {
+        if (tenants.empty()) {
+            cout << "No tenants available.\n";
+            return;
+        }
+        for (const auto& tenant : tenants) {
+            tenant.showInfo();
+            cout << "------------------------" << endl;
+        }
+    }
+
+    // Update: Update apartment information
+    void updateApartment() {
+        int index;
+        cout << "Enter apartment index to update: ";
+        cin >> index;
+        if (index >= 0 && index < apartments.size()) {
+            string newAddress;
+            int newRooms;
+            double newRent;
+
+            cout << "Enter new address: ";
+            cin.ignore();
+            getline(cin, newAddress);
+            cout << "Enter new number of rooms: ";
+            cin >> newRooms;
+            cout << "Enter new rent price: ";
+            cin >> newRent;
+
+            apartments[index].setAddress(newAddress);
+            apartments[index].setRooms(newRooms);
+            apartments[index].setRent(newRent);
+            cout << "Apartment updated successfully.\n";
+        }
+        else {
+            cout << "Invalid apartment index.\n";
+        }
+    }
+
+    // Update: Update tenant information
+    void updateTenant() {
+        int index;
+        cout << "Enter tenant index to update: ";
+        cin >> index;
+        if (index >= 0 && index < tenants.size()) {
+            string newName, newPhoneNumber;
+
+            cout << "Enter new name: ";
+            cin.ignore();
+            getline(cin, newName);
+            cout << "Enter new phone number: ";
+            getline(cin, newPhoneNumber);
+
+            tenants[index].setName(newName);
+            tenants[index].setPhoneNumber(newPhoneNumber);
+            cout << "Tenant updated successfully.\n";
+        }
+        else {
+            cout << "Invalid tenant index.\n";
+        }
+    }
+
+    // Delete: Remove an apartment
+    void deleteApartment() {
+        int index;
+        cout << "Enter apartment index to delete: ";
+        cin >> index;
+        if (index >= 0 && index < apartments.size()) {
+            apartments.erase(apartments.begin() + index);
+            cout << "Apartment removed successfully.\n";
+        }
+        else {
+            cout << "Invalid apartment index.\n";
+        }
+    }
+
+    // Delete: Remove a tenant
+    void deleteTenant() {
+        int index;
+        cout << "Enter tenant index to delete: ";
+        cin >> index;
+        if (index >= 0 && index < tenants.size()) {
+            tenants.erase(tenants.begin() + index);
+            cout << "Tenant removed successfully.\n";
+        }
+        else {
+            cout << "Invalid tenant index.\n";
+        }
+    }
+
+    // Rent an apartment
+    void rentApartment() {
+        int index;
+        cout << "Enter apartment index to rent: ";
+        cin >> index;
         if (index >= 0 && index < apartments.size()) {
             apartments[index].rentApartment();
         }
         else {
-            cout << "Неправильный индекс квартиры." << endl;
+            cout << "Invalid apartment index.\n";
         }
     }
 
-    // Освобождение квартиры
-    void freeApartment(int index) {
+    // Free an apartment
+    void freeApartment() {
+        int index;
+        cout << "Enter apartment index to free: ";
+        cin >> index;
         if (index >= 0 && index < apartments.size()) {
             apartments[index].freeApartment();
         }
         else {
-            cout << "Неправильный индекс квартиры." << endl;
+            cout << "Invalid apartment index.\n";
         }
     }
 };
 
+// Function to display the menu
+void displayMenu() {
+    cout << "\nApartment Rental System Menu:\n";
+    cout << "1. Add Apartment\n";
+    cout << "2. Add Tenant\n";
+    cout << "3. Show All Apartments\n";
+    cout << "4. Show All Tenants\n";
+    cout << "5. Update Apartment\n";
+    cout << "6. Update Tenant\n";
+    cout << "7. Delete Apartment\n";
+    cout << "8. Delete Tenant\n";
+    cout << "9. Rent Apartment\n";
+    cout << "10. Free Apartment\n";
+    cout << "0. Exit\n";
+    cout << "Enter your choice: ";
+}
+
 int main() {
     RentalSystem system;
+    int choice;
 
-    // Добавление нескольких квартир
-    system.addApartment(Apartment("ул. Пушкина, 10", 3, 30000));
-    system.addApartment(Apartment("ул. Лермонтова, 25", 2, 20000));
-    system.addApartment(Apartment("ул. Гоголя, 5", 1, 15000));
+    do {
+        displayMenu();
+        cin >> choice;
 
-    // Добавление арендатора
-    system.addTenant(Tenant("Иван Иванов", "+7-900-123-45-67"));
-
-    // Показ всех квартир
-    cout << "Все квартиры в системе:\n";
-    system.showAllApartments();
-
-    // Аренда квартиры
-    system.rentApartment(1);
-
-    // Попытка арендовать ту же квартиру снова
-    system.rentApartment(1);
-
-    // Освобождение квартиры
-    system.freeApartment(1);
-
-    // Повторная аренда квартиры
-    system.rentApartment(1);
+        switch (choice) {
+        case 1:
+            system.addApartment();
+            break;
+        case 2:
+            system.addTenant();
+            break;
+        case 3:
+            system.showAllApartments();
+            break;
+        case 4:
+            system.showAllTenants();
+            break;
+        case 5:
+            system.updateApartment();
+            break;
+        case 6:
+            system.updateTenant();
+            break;
+        case 7:
+            system.deleteApartment();
+            break;
+        case 8:
+            system.deleteTenant();
+            break;
+        case 9:
+            system.rentApartment();
+            break;
+        case 10:
+            system.freeApartment();
+            break;
+        case 0:
+            cout << "Exiting program...\n";
+            break;
+        default:
+            cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 0);
 
     return 0;
 }
