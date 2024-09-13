@@ -10,4 +10,4 @@
 - **Валюта**: Валюта в которой вы хотите искать квартиру для съема.
 
 ## Sonar
-[https://sonarcloud.io/project/overview?id=gotovkk_StorageClassLab1  ](https://sonarcloud.io/project/overview?id=RetroPaladinNerd_ApartmentRental)    
+https://sonarcloud.io/project/overview?id=RetroPaladinNerd_ApartmentRental
