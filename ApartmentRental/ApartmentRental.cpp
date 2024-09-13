@@ -91,30 +91,34 @@ public:
     // Create: Add a new apartment
     void addApartment() {
         string address;
-        int rooms;
-        double rent;
         cout << "Enter apartment address: ";
         cin.ignore(); // To clear input buffer
         getline(cin, address);
+
+        int rooms;
         cout << "Enter number of rooms: ";
         cin >> rooms;
+
+        double rent;
         cout << "Enter rent price: ";
         cin >> rent;
 
-        apartments.push_back(Apartment(address, rooms, rent));
+        apartments.emplace_back(address, rooms, rent);  // Using emplace_back
         cout << "Apartment added successfully.\n";
     }
 
     // Create: Add a new tenant
     void addTenant() {
-        string name, phoneNumber;
+        string name;
         cout << "Enter tenant name: ";
         cin.ignore();
         getline(cin, name);
+
+        string phoneNumber;
         cout << "Enter tenant phone number: ";
         getline(cin, phoneNumber);
 
-        tenants.push_back(Tenant(name, phoneNumber));
+        tenants.emplace_back(name, phoneNumber);  // Using emplace_back
         cout << "Tenant added successfully.\n";
     }
 
@@ -149,14 +153,15 @@ public:
         cin >> index;
         if (index >= 0 && index < apartments.size()) {
             string newAddress;
-            int newRooms;
-            double newRent;
-
             cout << "Enter new address: ";
             cin.ignore();
             getline(cin, newAddress);
+
+            int newRooms;
             cout << "Enter new number of rooms: ";
             cin >> newRooms;
+
+            double newRent;
             cout << "Enter new rent price: ";
             cin >> newRent;
 
@@ -176,11 +181,12 @@ public:
         cout << "Enter tenant index to update: ";
         cin >> index;
         if (index >= 0 && index < tenants.size()) {
-            string newName, newPhoneNumber;
-
+            string newName;
             cout << "Enter new name: ";
             cin.ignore();
             getline(cin, newName);
+
+            string newPhoneNumber;
             cout << "Enter new phone number: ";
             getline(cin, newPhoneNumber);
 
