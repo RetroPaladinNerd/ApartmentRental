@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 using namespace std;
@@ -13,8 +14,8 @@ private:
     bool isAvailable;
 
 public:
-    // Constructor
-    Apartment(string address, int rooms, double rent)
+    // Constructor using string_view
+    Apartment(string_view address, int rooms, double rent)
         : address(address), rooms(rooms), rent(rent), isAvailable(true) {}
 
     // Function to show apartment info
@@ -27,7 +28,7 @@ public:
 
     // Getters and setters for CRUD operations
     string getAddress() const { return address; }
-    void setAddress(const string& newAddress) { address = newAddress; }
+    void setAddress(string_view newAddress) { address = newAddress; }
 
     int getRooms() const { return rooms; }
     void setRooms(int newRooms) { rooms = newRooms; }
@@ -62,8 +63,9 @@ private:
     string phoneNumber;
 
 public:
-    // Constructor
-    Tenant(string name, string phoneNumber) : name(name), phoneNumber(phoneNumber) {}
+    // Constructor using string_view
+    Tenant(string_view name, string_view phoneNumber)
+        : name(name), phoneNumber(phoneNumber) {}
 
     // Function to show tenant info
     void showInfo() const {
@@ -73,10 +75,10 @@ public:
 
     // Getters and setters for CRUD operations
     string getName() const { return name; }
-    void setName(const string& newName) { name = newName; }
+    void setName(string_view newName) { name = newName; }
 
     string getPhoneNumber() const { return phoneNumber; }
-    void setPhoneNumber(const string& newPhoneNumber) { phoneNumber = newPhoneNumber; }
+    void setPhoneNumber(string_view newPhoneNumber) { phoneNumber = newPhoneNumber; }
 };
 
 // Class RentalSystem
