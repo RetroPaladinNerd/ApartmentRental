@@ -11,12 +11,12 @@ private:
     string address;
     int rooms;
     double rent;
-    bool isAvailable;
+    bool isAvailable = true;  // In-class initializer for isAvailable
 
 public:
     // Constructor using string_view
     Apartment(string_view address, int rooms, double rent)
-        : address(address), rooms(rooms), rent(rent), isAvailable(true) {}
+        : address(address), rooms(rooms), rent(rent) {}
 
     // Function to show apartment info
     void showInfo() const {
