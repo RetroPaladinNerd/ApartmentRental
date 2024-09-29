@@ -17,10 +17,14 @@ enum class Currency {
 // Функция для получения строки названия валюты
 string currencyToString(Currency currency) {
     switch (currency) {
-    case Currency::BYN: return "BYN";
-    case Currency::USD: return "USD";
-    case Currency::EUR: return "EUR";
-    default: return "";
+    case Currency::BYN:
+        return "BYN";
+    case Currency::USD:
+        return "USD";
+    case Currency::EUR:
+        return "EUR";
+    default:
+        return "";
     }
 }
 
@@ -31,13 +35,13 @@ private:
     int rooms;
     double rent;
     Currency currency;      // Поле для валюты
-    bool isAvailable = true;  // Инициализация isAvailable внутри класса
-    vector<double> ratings;   // Массив для хранения оценок
+    bool isAvailable;       // Инициализация isAvailable будет в конструкторе
+    vector<double> ratings; // Массив для хранения оценок
 
 public:
     // Конструктор
     Apartment(string_view address, int rooms, double rent, Currency currency)
-        : address(address), rooms(rooms), rent(rent), currency(currency) {}
+        : address(address), rooms(rooms), rent(rent), currency(currency), isAvailable(true) {}
 
     // Функция отображения информации о квартире
     void showInfo(int index) const {
@@ -51,11 +55,16 @@ public:
 
     // Получение средней оценки
     double getAverageRating() const {
-        if (ratings.empty()) return 0.0;
+        if (ratings.empty()) {
+            return 0.0;
+        }
+
         double sum = 0;
+
         for (double rating : ratings) {
             sum += rating;
         }
+
         return round((sum / ratings.size()) * 100) / 100; // Округление до сотых
     }
 
@@ -66,19 +75,41 @@ public:
     }
 
     // Получатели и установщики для работы с данными
-    string getAddress() const { return address; }
-    void setAddress(string_view newAddress) { address = newAddress; }
+    string getAddress() const {
+        return address;
+    }
 
-    int getRooms() const { return rooms; }
-    void setRooms(int newRooms) { rooms = newRooms; }
+    void setAddress(string_view newAddress) {
+        address = newAddress;
+    }
 
-    double getRent() const { return rent; }
-    void setRent(double newRent) { rent = newRent; }
+    int getRooms() const {
+        return rooms;
+    }
 
-    Currency getCurrency() const { return currency; }
-    void setCurrency(Currency newCurrency) { currency = newCurrency; }
+    void setRooms(int newRooms) {
+        rooms = newRooms;
+    }
 
-    bool getAvailability() const { return isAvailable; }
+    double getRent() const {
+        return rent;
+    }
+
+    void setRent(double newRent) {
+        rent = newRent;
+    }
+
+    Currency getCurrency() const {
+        return currency;
+    }
+
+    void setCurrency(Currency newCurrency) {
+        currency = newCurrency;
+    }
+
+    bool getAvailability() const {
+        return isAvailable;
+    }
 
     // Функция аренды квартиры
     void rentApartment() {
@@ -101,7 +132,7 @@ public:
 // Класс RentalSystem
 class RentalSystem {
 private:
-    vector<Apartment> apartments;
+    vector<Apartment> apartments; // Вектор для хранения квартир
 
 public:
     // Добавление квартиры
@@ -119,8 +150,7 @@ public:
         cout << "Введите стоимость аренды: ";
         cin >> rent;
 
-        // Подменю для выбора валюты
-        int currencyChoice;
+        int currencyChoice; // Переменная для выбора валюты
         cout << "Выберите валюту:\n";
         cout << "1. BYN\n";
         cout << "2. USD\n";
@@ -155,6 +185,7 @@ public:
             cout << "Нет доступных квартир.\n";
             return;
         }
+
         for (size_t i = 0; i < apartments.size(); ++i) {
             apartments[i].showInfo(i + 1); // Индекс квартиры начинается с 1
             cout << "------------------------" << endl;
@@ -164,6 +195,7 @@ public:
     // Поиск квартиры по диапазону цен
     void searchApartmentByPrice(double minPrice, double maxPrice) const {
         bool found = false;
+
         for (size_t i = 0; i < apartments.size(); ++i) {
             if (apartments[i].getRent() >= minPrice && apartments[i].getRent() <= maxPrice) {
                 apartments[i].showInfo(i + 1); // Индекс квартиры начинается с 1
@@ -171,6 +203,7 @@ public:
                 found = true;
             }
         }
+
         if (!found) {
             cout << "Квартиры в данном диапазоне цен не найдены.\n";
         }
@@ -188,13 +221,14 @@ public:
     void rateApartment() {
         int index;
         double rating;
+
         cout << "Введите индекс квартиры для оценки: ";
         cin >> index;
 
         if (index >= 1 && index <= apartments.size()) { // Индексы теперь от 1 до size
             cout << "Введите оценку (от 1 до 5): ";  // Рейтинг от 1 до 5
             cin >> rating;
-            if (rating >= 1.0 && rating <= 5.0) {     // Устанавливаем диапазон 1-5
+            if (rating >= 1.0 && rating <= 5.0) { // Устанавливаем диапазон 1-5
                 apartments[index - 1].addRating(rating); // Индекс для массива
             }
             else {
@@ -209,6 +243,7 @@ public:
     // Аренда квартиры
     void rentApartment() {
         int index;
+
         cout << "Введите индекс квартиры для аренды: ";
         cin >> index;
 
@@ -223,6 +258,7 @@ public:
     // Освобождение квартиры
     void freeApartment() {
         int index;
+
         cout << "Введите индекс квартиры для освобождения: ";
         cin >> index;
 
@@ -234,9 +270,6 @@ public:
         }
     }
 };
-
-// Используем enum для Currency
-using enum Currency;
 
 // Функция для отображения меню
 void displayMenu() {
@@ -255,8 +288,9 @@ void displayMenu() {
 int main() {
     system("chcp 1251");
     system("cls");
-    RentalSystem system;
-    int choice;
+
+    RentalSystem system; // Создание экземпляра системы аренды квартир
+    int choice; // Переменная для выбора меню
 
     do {
         displayMenu();
@@ -270,11 +304,14 @@ int main() {
             system.showAllApartments();
             break;
         case 3: {
-            double minPrice, maxPrice;
+            double minPrice; // Минимальная цена
+            double maxPrice; // Максимальная цена
+
             cout << "Введите минимальную цену: ";
             cin >> minPrice;
             cout << "Введите максимальную цену: ";
             cin >> maxPrice;
+
             system.searchApartmentByPrice(minPrice, maxPrice);
             break;
         }
