@@ -257,7 +257,6 @@ void displayMenu() {
     cout << "0. Выйти\n\n";
     cout << "Введите ваш выбор: ";
 }
-
 int main() {
     system("chcp 1251");
     system("cls");
