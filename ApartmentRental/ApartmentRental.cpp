@@ -2,8 +2,9 @@
 #include <string>
 #include <string_view>
 #include <vector>
-#include <algorithm> // для std::sort
+#include <algorithm> // для std::ranges::sort
 #include <iomanip>   // для std::setprecision
+#include <ranges>    // для std::ranges
 
 using namespace std;
 
@@ -27,12 +28,12 @@ string currencyToString(Currency currency) {
 // Класс Apartment
 class Apartment {
 private:
-    string address;
-    int rooms;
-    double rent;
-    Currency currency;      // Поле для валюты
-    bool isAvailable = true;  // Инициализация isAvailable внутри класса
-    vector<double> ratings;   // Массив для хранения оценок
+    string address;                // Адрес квартиры
+    int rooms;                     // Количество комнат
+    double rent;                   // Стоимость аренды
+    Currency currency;             // Валюта
+    bool isAvailable = true;       // Доступность квартиры
+    vector<double> ratings;        // Оценки квартиры
 
 public:
     // Конструктор
@@ -52,7 +53,7 @@ public:
     // Получение средней оценки
     double getAverageRating() const {
         if (ratings.empty()) return 0.0;
-        double sum = 0;
+        double sum = 0.0;
         for (double rating : ratings) {
             sum += rating;
         }
@@ -101,26 +102,26 @@ public:
 // Класс RentalSystem
 class RentalSystem {
 private:
-    vector<Apartment> apartments;
+    vector<Apartment> apartments; // Вектор квартир
 
 public:
     // Добавление квартиры
     void addApartment() {
-        string address;
+        string address; // Адрес квартиры
         cout << "Введите адрес квартиры: ";
         cin.ignore();
         getline(cin, address);
 
-        int rooms;
+        int rooms; // Количество комнат
         cout << "Введите количество комнат: ";
         cin >> rooms;
 
-        double rent;
+        double rent; // Стоимость аренды
         cout << "Введите стоимость аренды: ";
         cin >> rent;
 
         // Подменю для выбора валюты
-        int currencyChoice;
+        int currencyChoice; // Выбор валюты
         cout << "Выберите валюту:\n";
         cout << "1. BYN\n";
         cout << "2. USD\n";
@@ -128,7 +129,7 @@ public:
         cout << "Введите ваш выбор: ";
         cin >> currencyChoice;
 
-        Currency currency;
+        Currency currency; // Валюта
         switch (currencyChoice) {
         case 1:
             currency = Currency::BYN;
@@ -178,7 +179,8 @@ public:
 
     // Сортировка квартир по стоимости
     void sortApartmentsByPrice() {
-        sort(apartments.begin(), apartments.end(), [](const Apartment& a, const Apartment& b) {
+        auto& range = apartments; // Определяем диапазон
+        std::ranges::sort(range, [](const Apartment& a, const Apartment& b) {
             return a.getRent() < b.getRent();
             });
         cout << "Квартиры успешно отсортированы по стоимости аренды.\n";
@@ -186,8 +188,8 @@ public:
 
     // Добавление рейтинга квартире
     void rateApartment() {
-        int index;
-        double rating;
+        int index; // Индекс квартиры
+        double rating; // Рейтинг квартиры
         cout << "Введите индекс квартиры для оценки: ";
         cin >> index;
 
@@ -208,7 +210,7 @@ public:
 
     // Аренда квартиры
     void rentApartment() {
-        int index;
+        int index; // Индекс квартиры
         cout << "Введите индекс квартиры для аренды: ";
         cin >> index;
 
@@ -222,7 +224,7 @@ public:
 
     // Освобождение квартиры
     void freeApartment() {
-        int index;
+        int index; // Индекс квартиры
         cout << "Введите индекс квартиры для освобождения: ";
         cin >> index;
 
@@ -244,7 +246,7 @@ void displayMenu() {
     cout << "4. Сортировка квартир по стоимости\n";
     cout << "5. Оценить квартиру\n";
     cout << "6. Арендовать квартиру\n";
-    cout << "7. Освободить квартиру\n"; // Новый пункт в меню
+    cout << "7. Освободить квартиру\n"; // Новый пункт меню
     cout << "0. Выйти\n\n";
     cout << "Введите ваш выбор: ";
 }
@@ -253,48 +255,49 @@ int main() {
     system("chcp 1251");
     system("cls");
     RentalSystem system;
-    int choice;
+    int choice; // Выбор пользователя
 
     do {
-        displayMenu();
-        cin >> choice;
+        displayMenu(); // Отображение меню
+        cin >> choice; // Ввод выбора
 
         switch (choice) {
         case 1:
-            system.addApartment();
+            system.addApartment(); // Добавление квартиры
             break;
         case 2:
-            system.showAllApartments();
+            system.showAllApartments(); // Показ всех квартир
             break;
         case 3: {
-            double minPrice, maxPrice;
+            double minPrice; // Минимальная цена
+            double maxPrice; // Максимальная цена
             cout << "Введите минимальную цену: ";
             cin >> minPrice;
             cout << "Введите максимальную цену: ";
             cin >> maxPrice;
-            system.searchApartmentByPrice(minPrice, maxPrice);
+            system.searchApartmentByPrice(minPrice, maxPrice); // Поиск квартиры по цене
             break;
         }
         case 4:
-            system.sortApartmentsByPrice();
+            system.sortApartmentsByPrice(); // Сортировка квартир
             break;
         case 5:
-            system.rateApartment();
+            system.rateApartment(); // Оценка квартиры
             break;
         case 6:
-            system.rentApartment();
+            system.rentApartment(); // Аренда квартиры
             break;
         case 7:
-            system.freeApartment(); // Новый пункт в меню
+            system.freeApartment(); // Освобождение квартиры
             break;
         case 0:
-            cout << "Выход из программы.\n";
+            cout << "Выход из программы.\n"; // Выход
             break;
         default:
-            cout << "Неверный выбор. Пожалуйста, попробуйте снова.\n";
+            cout << "Неверный выбор. Пожалуйста, попробуйте снова.\n"; // Неверный выбор
             break;
         }
-    } while (choice != 0);
+    } while (choice != 0); // Цикл до выхода
 
-    return 0;
+    return 0; // Завершение программы
 }
