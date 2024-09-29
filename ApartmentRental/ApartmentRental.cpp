@@ -35,16 +35,18 @@ private:
     string address;
     int rooms;
     double rent;
-    Currency currency;      // Поле для валюты
-    bool isAvailable;       // Инициализация isAvailable будет в конструкторе
-    vector<double> ratings; // Массив для хранения оценок
+    Currency currency;
+    bool isAvailable = true; 
+    vector<double> ratings;
 
 public:
-    // Конструктор
+    
     Apartment(string_view address, int rooms, double rent, Currency currency)
-        : address(address), rooms(rooms), rent(rent), currency(currency), isAvailable(true) {}
+        : address(address), rooms(rooms), rent(rent), currency(currency) {
+        
+    }
 
-    // Функция отображения информации о квартире
+    
     void showInfo(int index) const {
         std::cout << std::format("Квартира #{}\n", index); // Индекс квартиры начинается с 1
         std::cout << std::format("Адрес: {}\n", address);
