@@ -2,9 +2,8 @@
 #include <string>
 #include <string_view>
 #include <vector>
-#include <algorithm> // для std::ranges::sort
+#include <algorithm> // для std::sort
 #include <iomanip>   // для std::setprecision
-#include <ranges>    // для std::ranges
 
 using namespace std;
 
@@ -28,12 +27,12 @@ string currencyToString(Currency currency) {
 // Класс Apartment
 class Apartment {
 private:
-    string address;                // Адрес квартиры
-    int rooms;                     // Количество комнат
-    double rent;                   // Стоимость аренды
-    Currency currency;             // Валюта
-    bool isAvailable = true;       // Доступность квартиры
-    vector<double> ratings;        // Оценки квартиры
+    string address;
+    int rooms;
+    double rent;
+    Currency currency;      // Поле для валюты
+    bool isAvailable = true;  // Инициализация isAvailable внутри класса
+    vector<double> ratings;   // Массив для хранения оценок
 
 public:
     // Конструктор
@@ -53,7 +52,7 @@ public:
     // Получение средней оценки
     double getAverageRating() const {
         if (ratings.empty()) return 0.0;
-        double sum = 0.0;
+        double sum = 0;
         for (double rating : ratings) {
             sum += rating;
         }
@@ -102,26 +101,26 @@ public:
 // Класс RentalSystem
 class RentalSystem {
 private:
-    vector<Apartment> apartments; // Вектор квартир
+    vector<Apartment> apartments;
 
 public:
     // Добавление квартиры
     void addApartment() {
-        string address; // Адрес квартиры
+        string address;
         cout << "Введите адрес квартиры: ";
         cin.ignore();
         getline(cin, address);
 
-        int rooms; // Количество комнат
+        int rooms;
         cout << "Введите количество комнат: ";
         cin >> rooms;
 
-        double rent; // Стоимость аренды
+        double rent;
         cout << "Введите стоимость аренды: ";
         cin >> rent;
 
         // Подменю для выбора валюты
-        int currencyChoice; // Выбор валюты
+        int currencyChoice;
         cout << "Выберите валюту:\n";
         cout << "1. BYN\n";
         cout << "2. USD\n";
@@ -129,7 +128,7 @@ public:
         cout << "Введите ваш выбор: ";
         cin >> currencyChoice;
 
-        Currency currency; // Валюта
+        Currency currency;
         switch (currencyChoice) {
         case 1:
             currency = Currency::BYN;
@@ -179,8 +178,7 @@ public:
 
     // Сортировка квартир по стоимости
     void sortApartmentsByPrice() {
-        auto& range = apartments; // Определяем диапазон
-        std::ranges::sort(range, [](const Apartment& a, const Apartment& b) {
+        sort(apartments.begin(), apartments.end(), [](const Apartment& a, const Apartment& b) {
             return a.getRent() < b.getRent();
             });
         cout << "Квартиры успешно отсортированы по стоимости аренды.\n";
@@ -188,8 +186,8 @@ public:
 
     // Добавление рейтинга квартире
     void rateApartment() {
-        int index; // Индекс квартиры
-        double rating; // Рейтинг квартиры
+        int index;
+        double rating;
         cout << "Введите индекс квартиры для оценки: ";
         cin >> index;
 
@@ -210,7 +208,7 @@ public:
 
     // Аренда квартиры
     void rentApartment() {
-        int index; // Индекс квартиры
+        int index;
         cout << "Введите индекс квартиры для аренды: ";
         cin >> index;
 
@@ -224,7 +222,7 @@ public:
 
     // Освобождение квартиры
     void freeApartment() {
-        int index; // Индекс квартиры
+        int index;
         cout << "Введите индекс квартиры для освобождения: ";
         cin >> index;
 
@@ -246,7 +244,7 @@ void displayMenu() {
     cout << "4. Сортировка квартир по стоимости\n";
     cout << "5. Оценить квартиру\n";
     cout << "6. Арендовать квартиру\n";
-    cout << "7. Освободить квартиру\n"; // Новый пункт меню
+    cout << "7. Освободить квартиру\n"; // Новый пункт в меню
     cout << "0. Выйти\n\n";
     cout << "Введите ваш выбор: ";
 }
@@ -255,49 +253,48 @@ int main() {
     system("chcp 1251");
     system("cls");
     RentalSystem system;
-    int choice; // Выбор пользователя
+    int choice;
 
     do {
-        displayMenu(); // Отображение меню
-        cin >> choice; // Ввод выбора
+        displayMenu();
+        cin >> choice;
 
         switch (choice) {
         case 1:
-            system.addApartment(); // Добавление квартиры
+            system.addApartment();
             break;
         case 2:
-            system.showAllApartments(); // Показ всех квартир
+            system.showAllApartments();
             break;
         case 3: {
-            double minPrice; // Минимальная цена
-            double maxPrice; // Максимальная цена
+            double minPrice, maxPrice;
             cout << "Введите минимальную цену: ";
             cin >> minPrice;
             cout << "Введите максимальную цену: ";
             cin >> maxPrice;
-            system.searchApartmentByPrice(minPrice, maxPrice); // Поиск квартиры по цене
+            system.searchApartmentByPrice(minPrice, maxPrice);
             break;
         }
         case 4:
-            system.sortApartmentsByPrice(); // Сортировка квартир
+            system.sortApartmentsByPrice();
             break;
         case 5:
-            system.rateApartment(); // Оценка квартиры
+            system.rateApartment();
             break;
         case 6:
-            system.rentApartment(); // Аренда квартиры
+            system.rentApartment();
             break;
         case 7:
-            system.freeApartment(); // Освобождение квартиры
+            system.freeApartment(); // Новый пункт в меню
             break;
         case 0:
-            cout << "Выход из программы.\n"; // Выход
+            cout << "Выход из программы.\n";
             break;
         default:
-            cout << "Неверный выбор. Пожалуйста, попробуйте снова.\n"; // Неверный выбор
+            cout << "Неверный выбор. Пожалуйста, попробуйте снова.\n";
             break;
         }
-    } while (choice != 0); // Цикл до выхода
+    } while (choice != 0);
 
-    return 0; // Завершение программы
+    return 0;
 }
