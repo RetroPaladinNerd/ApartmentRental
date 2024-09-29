@@ -275,12 +275,13 @@ int main() {
             system.showAllApartments();
             break;
         case 3: {
-            double minPrice, maxPrice;
+            double minPrice;  
+            double maxPrice;  
             cout << "Введите минимальную цену: ";
-            cin >> minPrice;
+            cin >> minPrice;  
             cout << "Введите максимальную цену: ";
             cin >> maxPrice;
-            system.searchApartmentByPrice(minPrice, maxPrice);
+            system.searchApartmentByPrice(minPrice, maxPrice);  
             break;
         }
         case 4:
