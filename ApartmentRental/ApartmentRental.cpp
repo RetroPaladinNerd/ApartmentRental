@@ -7,114 +7,133 @@
 #include <format>    // для std::format
 #include <ranges>    // для std::ranges
 
-using namespace std;
+using std::cout;
+using std::cin;
+using std::string;
+using std::string_view;
+using std::vector;
 
-// Перечисление для валют
 enum class Currency {
     BYN, // Белорусский рубль
     USD, // Доллар США
     EUR  // Евро
 };
 
-// Использование enum для упрощения доступа к валютам
-using enum Currency;
+Currency BYN = Currency::BYN;
+Currency USD = Currency::USD;
+Currency EUR = Currency::EUR;
 
-// Функция для получения строки названия валюты
-string currencyToString(Currency currency) {
+std::string_view currencyToString(Currency currency) {
     switch (currency) {
-    case BYN: return "BYN";
-    case USD: return "USD";
-    case EUR: return "EUR";
-    default: return "";
+    case Currency::BYN:
+        return "BYN";
+    case Currency::USD:
+        return "USD";
+    case Currency::EUR:
+        return "EUR";
+    default:
+        return "";
     }
 }
 
-// Класс Apartment
 class Apartment {
 private:
     string address;
     int rooms;
     double rent;
-    Currency currency;      // Поле для валюты
-    bool isAvailable = true;  // Инициализация isAvailable внутри класса
-    vector<double> ratings;   // Массив для хранения оценок
+    Currency currency;
+    bool isAvailable = true;
+    vector<double> ratings;
 
 public:
-    // Конструктор
     Apartment(string_view address, int rooms, double rent, Currency currency)
         : address(address), rooms(rooms), rent(rent), currency(currency) {}
 
-    // Функция отображения информации о квартире
     void showInfo(int index) const {
-        cout << std::format("Квартира #{}\n", index); // Индекс квартиры начинается с 1
+        cout << std::format("Квартира #{}\n", index);
         cout << std::format("Адрес: {}\n", address);
         cout << std::format("Комнат: {}\n", rooms);
         cout << std::format("Аренда: {} {}\n", rent, currencyToString(currency));
         cout << std::format("Доступность: {}\n", (isAvailable ? "Доступна" : "Занята"));
-        cout << std::format("Рейтинг: {}\n", (ratings.empty() ? "Нет рейтинга" : to_string(getAverageRating())));
+        cout << std::format("Рейтинг: {}\n", (ratings.empty() ? "Нет рейтинга" : std::to_string(getAverageRating())));
     }
 
-    // Получение средней оценки
     double getAverageRating() const {
-        if (ratings.empty()) return 0.0;
+        if (ratings.empty()) 
+            return 0.0;
         double sum = 0;
         for (double rating : ratings) {
             sum += rating;
         }
-        return round((sum / ratings.size()) * 100) / 100; // Округление до сотых
+        return std::round((sum / ratings.size()) * 100) / 100;
     }
 
-    // Добавление оценки
     void addRating(double rating) {
         ratings.push_back(rating);
-        cout << std::format("Квартира оценена на {:.2f} звёзд.\n", rating); // Форматирование до двух знаков после запятой
+        cout << std::format("Квартира оценена на {:.2f} звёзд.\n", rating);
     }
 
-    // Получатели и установщики для работы с данными
-    string getAddress() const { return address; }
-    void setAddress(string_view newAddress) { address = newAddress; }
+    string getAddress() const { 
+        return address; 
+    }
+    
+    void setAddress(string_view newAddress) { 
+        address = newAddress; 
+    }
 
-    int getRooms() const { return rooms; }
-    void setRooms(int newRooms) { rooms = newRooms; }
+    int getRooms() const { 
+        return rooms; 
+    }
+    
+    void setRooms(int newRooms) { 
+        rooms = newRooms; 
+    }
 
-    double getRent() const { return rent; }
-    void setRent(double newRent) { rent = newRent; }
+    double getRent() const { 
+        return rent; 
+    }
+    
+    void setRent(double newRent) { 
+        rent = newRent; 
+    }
 
-    Currency getCurrency() const { return currency; }
-    void setCurrency(Currency newCurrency) { currency = newCurrency; }
+    Currency getCurrency() const { 
+        return currency; 
+    }
+    
+    void setCurrency(Currency newCurrency) { 
+        currency = newCurrency; 
+    }
 
-    bool getAvailability() const { return isAvailable; }
+    bool getAvailability() const { 
+        return isAvailable; 
+    }
 
-    // Функция аренды квартиры
     void rentApartment() {
         if (isAvailable) {
             isAvailable = false;
             cout << std::format("Квартира на {} арендована.\n", address);
-        }
-        else {
+        } else {
             cout << std::format("Квартира на {} уже арендована.\n", address);
         }
     }
 
-    // Функция освобождения квартиры
     void freeApartment() {
         isAvailable = true;
         cout << std::format("Квартира на {} снова доступна для аренды.\n", address);
     }
 };
 
-// Класс RentalSystem
 class RentalSystem {
 private:
     vector<Apartment> apartments;
 
 public:
-    // Добавление квартиры
     void addApartment() {
         string address;
         cout << "Введите адрес квартиры: ";
         cin.ignore();
-        getline(cin, address);
+        std::getline(cin, address);
 
         int rooms;
         cout << "Введите количество комнат: ";
@@ -124,7 +143,6 @@ public:
         cout << "Введите стоимость аренды: ";
         cin >> rent;
 
-        // Подменю для выбора валюты
         int currencyChoice;
         cout << "Выберите валюту:\n";
         cout << "1. BYN\n";
@@ -154,25 +172,23 @@ public:
         cout << "Квартира добавлена успешно.\n";
     }
 
-    // Показ всех квартир
     void showAllApartments() const {
         if (apartments.empty()) {
             cout << "Нет доступных квартир.\n";
             return;
         }
         for (size_t i = 0; i < apartments.size(); ++i) {
-            apartments[i].showInfo(i + 1); // Индекс квартиры начинается с 1
-            cout << "------------------------" << endl;
+            apartments[i].showInfo(i + 1);
+            cout << "------------------------\n";
         }
     }
 
-    // Поиск квартиры по диапазону цен
     void searchApartmentByPrice(double minPrice, double maxPrice) const {
         bool found = false;
         for (size_t i = 0; i < apartments.size(); ++i) {
             if (apartments[i].getRent() >= minPrice && apartments[i].getRent() <= maxPrice) {
-                apartments[i].showInfo(i + 1); // Индекс квартиры начинается с 1
-                cout << "------------------------" << endl;
+                apartments[i].showInfo(i + 1);
+                cout << "------------------------\n";
                 found = true;
             }
         }
@@ -181,70 +197,61 @@ public:
         }
     }
 
-    // Сортировка квартир по стоимости с использованием std::ranges::sort
     void sortApartmentsByPrice() {
-        auto begin = apartments.begin(); // Определение начала диапазона
-        auto end = apartments.end();     // Определение конца диапазона
+        auto begin = apartments.begin();
+        auto end = apartments.end();
 
         std::ranges::sort(begin, end, [](const Apartment& a, const Apartment& b) {
             return a.getRent() < b.getRent();
-            });
+        });
 
         cout << "Квартиры успешно отсортированы по стоимости аренды.\n";
     }
 
-    // Добавление рейтинга квартире
     void rateApartment() {
         int index;
         double rating;
         cout << "Введите индекс квартиры для оценки: ";
         cin >> index;
 
-        if (index >= 1 && index <= apartments.size()) { // Индексы теперь от 1 до size
-            cout << "Введите оценку (от 1 до 5): ";  // Рейтинг от 1 до 5
+        if (index >= 1 && index <= apartments.size()) {
+            cout << "Введите оценку (от 1 до 5): ";
             cin >> rating;
-            if (rating >= 1.0 && rating <= 5.0) {     // Устанавливаем диапазон 1-5
-                apartments[index - 1].addRating(rating); // Индекс для массива
-            }
-            else {
+            if (rating >= 1.0 && rating <= 5.0) {
+                apartments[index - 1].addRating(rating);
+            } else {
                 cout << "Оценка должна быть от 1 до 5.\n";
             }
-        }
-        else {
+        } else {
             cout << "Неверный индекс квартиры.\n";
         }
     }
 
-    // Аренда квартиры
     void rentApartment() {
         int index;
         cout << "Введите индекс квартиры для аренды: ";
         cin >> index;
 
-        if (index >= 1 && index <= apartments.size()) { // Индексы теперь от 1 до size
-            apartments[index - 1].rentApartment(); // Индекс для массива
-        }
-        else {
+        if (index >= 1 && index <= apartments.size()) {
+            apartments[index - 1].rentApartment();
+        } else {
             cout << "Неверный индекс квартиры.\n";
         }
     }
 
-    // Освобождение квартиры
     void freeApartment() {
         int index;
         cout << "Введите индекс квартиры для освобождения: ";
         cin >> index;
 
-        if (index >= 1 && index <= apartments.size()) { // Индексы теперь от 1 до size
-            apartments[index - 1].freeApartment(); // Индекс для массива
-        }
-        else {
+        if (index >= 1 && index <= apartments.size()) {
+            apartments[index - 1].freeApartment();
+        } else {
             cout << "Неверный индекс квартиры.\n";
         }
     }
 };
 
-// Функция для отображения меню
 void displayMenu() {
     cout << "\nМеню системы аренды квартир:\n";
     cout << "1. Добавить квартиру\n";
@@ -253,13 +260,12 @@ void displayMenu() {
     cout << "4. Сортировка квартир по стоимости\n";
     cout << "5. Оценить квартиру\n";
     cout << "6. Арендовать квартиру\n";
-    cout << "7. Освободить квартиру\n"; // Новый пункт в меню
+    cout << "7. Освободить квартиру\n";
     cout << "0. Выйти\n\n";
     cout << "Введите ваш выбор: ";
 }
+
 int main() {
-    system("chcp 1251");
-    system("cls");
     RentalSystem system;
     int choice;
 
