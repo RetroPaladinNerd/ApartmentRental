@@ -285,7 +285,7 @@ int main() {
             system.rentApartment();
             break;
         case 7:
-            system.freeApartment(); // Новый пункт в меню
+            system.freeApartment(); 
             break;
         case 0:
             cout << "Выход из программы.\n";
