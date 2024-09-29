@@ -2,9 +2,10 @@
 #include <string>
 #include <string_view>
 #include <vector>
-#include <algorithm> // для std::sort
+#include <algorithm> // для std::ranges::sort
 #include <iomanip>   // для std::setprecision
 #include <format>    // для std::format
+#include <ranges>    // для std::ranges
 
 using namespace std;
 
@@ -180,11 +181,15 @@ public:
         }
     }
 
-    // Сортировка квартир по стоимости
+    // Сортировка квартир по стоимости с использованием std::ranges::sort
     void sortApartmentsByPrice() {
-        sort(apartments.begin(), apartments.end(), [](const Apartment& a, const Apartment& b) {
+        auto begin = apartments.begin(); // Определение начала диапазона
+        auto end = apartments.end();     // Определение конца диапазона
+
+        std::ranges::sort(begin, end, [](const Apartment& a, const Apartment& b) {
             return a.getRent() < b.getRent();
             });
+
         cout << "Квартиры успешно отсортированы по стоимости аренды.\n";
     }
 
