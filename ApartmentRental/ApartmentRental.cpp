@@ -128,7 +128,7 @@ public:
         cout << "Введите ваш выбор: ";
         cin >> currencyChoice;
 
-        Currency currency;
+        Currency currency; // Объявляем переменную для валюты
         switch (currencyChoice) {
         case 1:
             currency = Currency::BYN;
@@ -235,6 +235,9 @@ public:
     }
 };
 
+// Используем enum для Currency
+using enum Currency;
+
 // Функция для отображения меню
 void displayMenu() {
     cout << "\nМеню системы аренды квартир:\n";
@@ -285,7 +288,7 @@ int main() {
             system.rentApartment();
             break;
         case 7:
-            system.freeApartment(); 
+            system.freeApartment();
             break;
         case 0:
             cout << "Выход из программы.\n";
