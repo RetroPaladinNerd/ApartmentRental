@@ -128,7 +128,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ApartmentRental.cpp" />
+    <ClCompile Include="LandLord.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Apartment.cpp" />
+    <ClCompile Include="Currency.cpp" />
+    <ClCompile Include="RentalSystem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Apartment.h" />
+    <ClInclude Include="Currency.h" />
+    <ClInclude Include="LandLord.h" />
+    <ClInclude Include="RentalSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
