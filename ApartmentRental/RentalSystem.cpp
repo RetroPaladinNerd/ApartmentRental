@@ -89,4 +89,4 @@ void RentalSystem::landlordFreeRentedApartment(int landlordIndex) {
         std::cout << "Неверный индекс арендодателя.\n";
     }
 }
- 
+
