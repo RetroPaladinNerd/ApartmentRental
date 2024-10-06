@@ -22,10 +22,5 @@ public:
     void rentApartment(Apartment& apartment);      // Аренда квартиры
     void freeRentedApartment();                    // Освобождение арендованной квартиры
     void showRentedApartment() const;              // Показ арендованной квартиры
-
-    // Меню для арендодателя
-    void landlordMenu();
-
-    // Меню для арендатора
-    void tenantMenu();
 };
+
