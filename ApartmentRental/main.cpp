@@ -13,9 +13,11 @@ void apartmentMenu(RentalSystem& rentalSystem) {
         std::cout << "4. Вернуть квартиру\n";
         std::cout << "5. Удалить квартиру\n";
         std::cout << "6. Установить рейтинг квартире\n";
-        std::cout << "7. Расчёт стоимости аренды\n"; // Новый пункт для расчёта стоимости
+        std::cout << "7. Расчёт стоимости аренды\n"; //
         std::cout << "8. Сравнение двух квартир\n";
-        std::cout << "9. Назад в главное меню\n";
+        std::cout << "9. Загрузить данные о квартирах из файла\n";
+        std::cout << "10. Сохранить данные о квартирах в файл\n";
+        std::cout << "11. Назад в главное меню\n";
         std::cout << "Введите ваш выбор: ";
         std::cin >> choice;
 
@@ -113,6 +115,12 @@ void apartmentMenu(RentalSystem& rentalSystem) {
             rentalSystem.compareApartments(apartmentId1, apartmentId2);
             break;
         case 9:
+            rentalSystem.loadApartmentsFromFile("apartments.txt");
+            break;
+        case 10:
+            rentalSystem.saveApartmentsToFile("apartments.txt");
+            break;
+        case 11:
             return; // Возвращаемся в главное меню
         default:
             std::cout << "Неверный выбор, попробуйте снова.\n";
@@ -127,7 +135,9 @@ void userMenu(RentalSystem& rentalSystem) {
         std::cout << "\nМеню работы с пользователями:\n";
         std::cout << "1. Добавить пользователя\n";
         std::cout << "2. Показать всех пользователей\n";
-        std::cout << "3. Назад в главное меню\n";
+        std::cout << "3. Сохранить данные о пользователях в файл\n";
+        std::cout << "4. Загрузить данные о пользователях из файла\n";
+        std::cout << "5. Назад в главное меню\n";
         std::cout << "Введите ваш выбор: ";
         std::cin >> choice;
 
@@ -149,6 +159,12 @@ void userMenu(RentalSystem& rentalSystem) {
             rentalSystem.displayUsers();
             break;
         case 3:
+            rentalSystem.saveUsersToFile("users.txt");
+            break;
+        case 4:
+            rentalSystem.loadUsersFromFile("users.txt");
+            break;
+        case 5:
             return; // Возвращаемся в главное меню
         default:
             std::cout << "Неверный выбор, попробуйте снова.\n";
@@ -157,12 +173,14 @@ void userMenu(RentalSystem& rentalSystem) {
 }
 
 // Главное меню
-void mainMenu() {
+void mainMenu() 
+{
     RentalSystem rentalSystem;
     std::system("chcp 1251");
     std::system("cls");
     int choice;
-    while (true) {
+    while (true) 
+    {
         std::cout << "\nГлавное меню:\n";
         std::cout << "1. Меню работы с квартирами\n";
         std::cout << "2. Меню работы с пользователями\n";
@@ -170,7 +188,8 @@ void mainMenu() {
         std::cout << "Введите ваш выбор: ";
         std::cin >> choice;
 
-        switch (choice) {
+        switch (choice) 
+        {
         case 1:
             apartmentMenu(rentalSystem);
             break;
@@ -182,6 +201,7 @@ void mainMenu() {
             return;
         default:
             std::cout << "Неверный выбор, попробуйте снова.\n";
+
         }
     }
 }

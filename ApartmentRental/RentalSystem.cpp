@@ -1,5 +1,7 @@
 #include "RentalSystem.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 void RentalSystem::addApartment(const Apartment& apartment) {
     apartments.push_back(apartment);
@@ -89,7 +91,7 @@ double RentalSystem::calculateRentalCost(int apartmentId, int rentalDays) const 
     for (const auto& apartment : apartments) {
         if (apartment.getId() == apartmentId) {
             double basePrice = apartment.getPrice();
-            double totalCost = basePrice * rentalDays;
+            double totalCost = (basePrice * rentalDays)/30;
 
             // Пример скидки для долгосрочной аренды (>30 дней)
             if (rentalDays > 30) {
@@ -136,4 +138,82 @@ void RentalSystem::compareApartments(int apartmentId1, int apartmentId2) const {
     else {
         std::cout << "Одна или обе квартиры с указанными ID не найдены.\n";
     }
+}
+void RentalSystem::saveApartmentsToFile(const std::string& filename) const {
+    std::ofstream outFile(filename);
+    if (!outFile) {
+        std::cerr << "Ошибка открытия файла для записи.\n";
+        return;
+    }
+    for (const auto& apartment : apartments) {
+        outFile << apartment.getId() << ","
+            << apartment.getLocation() << ","
+            << apartment.getPrice() << ","
+            << (apartment.isAvailable() ? "1" : "0") << "\n";
+    }
+    outFile.close();
+    std::cout << "Данные о квартирах сохранены в файл " << filename << ".\n";
+}
+void RentalSystem::saveUsersToFile(const std::string& filename) const {
+    std::ofstream outFile(filename);
+    if (!outFile) {
+        std::cerr << "Ошибка открытия файла для записи.\n";
+        return;
+    }
+    for (const auto& user : users) {
+        outFile << user.getName() << "," << user.getEmail() << "\n";
+    }
+    outFile.close();
+    std::cout << "Данные о пользователях сохранены в файл " << filename << ".\n";
+}
+void RentalSystem::loadApartmentsFromFile(const std::string& filename) {
+    std::ifstream inFile(filename);
+    if (!inFile) {
+        std::cerr << "Ошибка открытия файла для чтения.\n";
+        return;
+    }
+
+    apartments.clear(); // Очищаем текущий список квартир
+    std::string line;
+    while (std::getline(inFile, line)) {
+        std::stringstream ss(line);
+        int id;
+        std::string location;
+        double price;
+        bool available;
+        char delimiter;
+
+        if (ss >> id >> delimiter) { // Читаем ID и пропускаем запятую
+            std::getline(ss, location, ','); // Читаем местоположение до запятой
+            ss >> price >> delimiter; // Читаем цену и пропускаем запятую
+            ss >> available; // Читаем доступность
+
+            Apartment apartment(id, location, price, available);
+            apartments.push_back(apartment); // Добавляем квартиру в список
+        }
+    }
+    inFile.close();
+    std::cout << "Данные о квартирах загружены из файла " << filename << ".\n";
+}
+void RentalSystem::loadUsersFromFile(const std::string& filename) {
+    std::ifstream inFile(filename);
+    if (!inFile) {
+        std::cerr << "Ошибка открытия файла для чтения.\n";
+        return;
+    }
+
+    users.clear(); // Очищаем текущий список пользователей
+    std::string line;
+    while (std::getline(inFile, line)) {
+        std::stringstream ss(line);
+        std::string name, email;
+
+        std::getline(ss, name, ','); // Читаем имя до запятой
+        std::getline(ss, email);     // Читаем email до конца строки
+
+        User user(name, email);
+        users.push_back(user); // Добавляем пользователя в список
+    }
+    inFile.close();
+    std::cout << "Данные о пользователях загружены из файла " << filename << ".\n";
 }
