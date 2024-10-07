@@ -2,32 +2,18 @@
 #include "RentalSystem.h"
 #include "User.h"
 
-void displayMenu() {
-    std::cout << "Меню системы аренды квартир:\n";
-    std::cout << "1. Показать доступные квартиры\n";
-    std::cout << "2. Арендовать квартиру\n";
-    std::cout << "3. Вернуть квартиру\n";
-    std::cout << "4. Удалить квартиру\n";
-    std::cout << "5. Загрузить квартиры из файла\n";
-    std::cout << "6. Сохранить квартиры в файл\n";
-    std::cout << "7. Загрузить пользователей из файла\n";
-    std::cout << "8. Сохранить пользователей в файл\n";
-    std::cout << "9. Выход\n";
-}
-
-int main() {
-    RentalSystem rentalSystem;
-    std::system("chcp 1251");
-    std::system("cls");
-    // Загружаем данные из файлов, если они существуют
-    rentalSystem.loadApartmentsFromFile("C:/Users/Admin/source/repos/ApartmentRental/ApartmentRental/apartments.txt");
-    rentalSystem.loadUsersFromFile("C:/Users/Admin/source/repos/ApartmentRental/ApartmentRental/users.txt");
-
+// Меню для работы с квартирами
+void apartmentMenu(RentalSystem& rentalSystem) {
+    int choice;
     while (true) {
-        displayMenu();
-        int choice;
+        std::cout << "\nМеню работы с квартирами:\n";
+        std::cout << "1. Показать доступные квартиры\n";
+        std::cout << "2. Арендовать квартиру\n";
+        std::cout << "3. Вернуть квартиру\n";
+        std::cout << "4. Удалить квартиру\n";
+        std::cout << "5. Назад в главное меню\n";
         std::cout << "Введите ваш выбор: ";
-        std::cin >> choice; // Получаем выбор пользователя
+        std::cin >> choice;
 
         switch (choice) {
         case 1:
@@ -36,7 +22,7 @@ int main() {
         case 2: {
             std::string name, email;
             std::cout << "Введите ваше имя: ";
-            std::cin.ignore(); // Игнорируем предыдущий ввод
+            std::cin.ignore();
             std::getline(std::cin, name);
             std::cout << "Введите ваш email: ";
             std::getline(std::cin, email);
@@ -63,24 +49,80 @@ int main() {
             break;
         }
         case 5:
-            rentalSystem.loadApartmentsFromFile("data/apartments.txt");
-            break;
-        case 6:
-            rentalSystem.saveApartmentsToFile("data/apartments.txt");
-            break;
-        case 7:
-            rentalSystem.loadUsersFromFile("data/users.txt");
-            break;
-        case 8:
-            rentalSystem.saveUsersToFile("data/users.txt");
-            break;
-        case 9:
-            return 0;
+            return; // Возвращаемся в главное меню
         default:
             std::cout << "Неверный выбор, попробуйте снова.\n";
         }
-        std::cout << std::endl; // Пустая строка для лучшего восприятия
     }
+}
 
+// Меню для работы с пользователями
+void userMenu(RentalSystem& rentalSystem) {
+    int choice;
+    while (true) {
+        std::cout << "\nМеню работы с пользователями:\n";
+        std::cout << "1. Добавить пользователя\n";
+        std::cout << "2. Показать всех пользователей\n";
+        std::cout << "3. Назад в главное меню\n";
+        std::cout << "Введите ваш выбор: ";
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1: {
+            std::string name, email;
+            std::cout << "Введите имя пользователя: ";
+            std::cin.ignore();
+            std::getline(std::cin, name);
+            std::cout << "Введите email пользователя: ";
+            std::getline(std::cin, email);
+
+            User user(name, email);
+            rentalSystem.addUser(user);
+            std::cout << "Пользователь добавлен.\n";
+            break;
+        }
+        case 2:
+            rentalSystem.displayUsers();
+            break;
+        case 3:
+            return; // Возвращаемся в главное меню
+        default:
+            std::cout << "Неверный выбор, попробуйте снова.\n";
+        }
+    }
+}
+
+// Главное меню
+void mainMenu() {
+    RentalSystem rentalSystem;
+    std::system("chcp 1251");
+    std::system("cls");
+    int choice;
+    while (true) {
+        std::cout << "\nГлавное меню:\n";
+        std::cout << "1. Меню работы с квартирами\n";
+        std::cout << "2. Меню работы с пользователями\n";
+        std::cout << "3. Выход\n";
+        std::cout << "Введите ваш выбор: ";
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1:
+            apartmentMenu(rentalSystem);
+            break;
+        case 2:
+            userMenu(rentalSystem);
+            break;
+        case 3:
+            std::cout << "Выход из программы...\n";
+            return;
+        default:
+            std::cout << "Неверный выбор, попробуйте снова.\n";
+        }
+    }
+}
+
+int main() {
+    mainMenu();
     return 0;
 }

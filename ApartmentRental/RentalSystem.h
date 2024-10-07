@@ -2,7 +2,6 @@
 #define RENTALSYSTEM_H
 
 #include <vector>
-#include <string>
 #include "Apartment.h"
 #include "User.h"
 
@@ -13,10 +12,9 @@ public:
     bool rentApartment(int apartmentId, const User& user);
     bool returnApartment(int apartmentId);
     bool removeApartment(int apartmentId);
-    void loadApartmentsFromFile(const std::string& filename);
-    void saveApartmentsToFile(const std::string& filename) const;
-    void loadUsersFromFile(const std::string& filename);
-    void saveUsersToFile(const std::string& filename) const;
+
+    void addUser(const User& user);
+    void displayUsers() const;
 
 private:
     std::vector<Apartment> apartments;

@@ -1,7 +1,5 @@
 #include "RentalSystem.h"
 #include <iostream>
-#include <fstream>
-#include <sstream>
 
 void RentalSystem::addApartment(const Apartment& apartment) {
     apartments.push_back(apartment);
@@ -56,63 +54,13 @@ bool RentalSystem::removeApartment(int apartmentId) {
     return false;
 }
 
-void RentalSystem::loadApartmentsFromFile(const std::string& filename) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Не удалось открыть файл: " << filename << std::endl;
-        return;
-    }
-
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        int id;
-        std::string location;
-        double price;
-        bool available;
-
-        if (iss >> id >> std::ws) {
-            std::getline(iss, location, ',');
-            iss >> price >> available;
-            addApartment(Apartment(id, location, price, available));
-        }
-    }
-    file.close();
+void RentalSystem::addUser(const User& user) {
+    users.push_back(user);
 }
 
-void RentalSystem::saveApartmentsToFile(const std::string& filename) const {
-    std::ofstream file(filename);
-    for (const auto& apartment : apartments) {
-        file << apartment.getId() << " "
-            << apartment.getLocation() << ","
-            << apartment.getPrice() << " "
-            << apartment.isAvailable() << "\n";
-    }
-    file.close();
-}
-
-void RentalSystem::loadUsersFromFile(const std::string& filename) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Не удалось открыть файл: " << filename << std::endl;
-        return;
-    }
-
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        std::string name, email;
-        std::getline(iss, name, ',');
-        std::getline(iss, email);
-        users.push_back(User(name, email));
-    }
-    file.close();
-}
-
-void RentalSystem::saveUsersToFile(const std::string& filename) const {
-    std::ofstream file(filename);
+void RentalSystem::displayUsers() const {
+    std::cout << "Пользователи:\n";
     for (const auto& user : users) {
-        file << user.toString() << "\n";
+        std::cout << "Имя: " << user.getName() << ", Email: " << user.getEmail() << "\n";
     }
-    file.close();
 }
