@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="User">
+    <Position X="5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAggAAAABAAAAAAEAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>User.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Apartment">
+    <Position X="0.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AgIBAAAAAAEQBAAAAEAAABACAQAAAAAAgAAAQAAAAgA=</HashCode>
+      <FileName>Apartment.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RentalSystem">
+    <Position X="2.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IQAAAEAAAAAAAKAAAAAAAAAAAAAAAAEAAACAIBQAEAA=</HashCode>
+      <FileName>RentalSystem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

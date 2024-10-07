@@ -7,19 +7,53 @@ void apartmentMenu(RentalSystem& rentalSystem) {
     int choice;
     while (true) {
         std::cout << "\nМеню работы с квартирами:\n";
-        std::cout << "1. Показать доступные квартиры\n";
-        std::cout << "2. Арендовать квартиру\n";
-        std::cout << "3. Вернуть квартиру\n";
-        std::cout << "4. Удалить квартиру\n";
-        std::cout << "5. Назад в главное меню\n";
+        std::cout << "1. Добавить квартиру\n";
+        std::cout << "2. Показать доступные квартиры\n";
+        std::cout << "3. Арендовать квартиру\n";
+        std::cout << "4. Вернуть квартиру\n";
+        std::cout << "5. Удалить квартиру\n";
+        std::cout << "6. Установить рейтинг квартире\n";
+        std::cout << "7. Расчёт стоимости аренды\n"; // Новый пункт для расчёта стоимости
+        std::cout << "8. Сравнение двух квартир\n";
+        std::cout << "9. Назад в главное меню\n";
         std::cout << "Введите ваш выбор: ";
         std::cin >> choice;
 
         switch (choice) {
-        case 1:
+        case 1: { // Новый блок для добавления квартиры
+            int id;
+            std::string location;
+            double price;
+            bool available;
+            char availabilityInput;
+
+            std::cout << "Введите ID новой квартиры: ";
+            std::cin >> id;
+            std::cin.ignore();
+            std::cout << "Введите местоположение: ";
+            std::getline(std::cin, location);
+            std::cout << "Введите цену: ";
+            std::cin >> price;
+            std::cout << "Квартира доступна? (y/n): ";
+            std::cin >> availabilityInput;
+            available = (availabilityInput == 'y' || availabilityInput == 'Y');
+
+            Apartment newApartment(id, location, price, available);
+            rentalSystem.addApartment(newApartment); // Добавляем квартиру в систему
+            std::cout << "Квартира добавлена успешно.\n";
+            break;
+        }
+        case 2:
             rentalSystem.displayAvailableApartments();
             break;
-        case 2: {
+        case 3: {
+            // Выбор валюты для аренды
+            std::string currency;
+            std::cout << "Выберите валюту (USD, EUR, BYN): ";
+            std::cin >> currency;
+
+            double rate = rentalSystem.getCurrencyRate(currency); // Получаем курс валюты
+
             std::string name, email;
             std::cout << "Введите ваше имя: ";
             std::cin.ignore();
@@ -31,24 +65,54 @@ void apartmentMenu(RentalSystem& rentalSystem) {
             int apartmentId;
             std::cout << "Введите ID квартиры для аренды: ";
             std::cin >> apartmentId;
-            rentalSystem.rentApartment(apartmentId, user);
+
+            rentalSystem.rentApartment(apartmentId, user, rate, currency); // Передаем валюту и курс
             break;
         }
-        case 3: {
+        case 4: {
             int apartmentId;
             std::cout << "Введите ID квартиры для возврата: ";
             std::cin >> apartmentId;
             rentalSystem.returnApartment(apartmentId);
             break;
         }
-        case 4: {
+        case 5: {
             int apartmentId;
             std::cout << "Введите ID квартиры для удаления: ";
             std::cin >> apartmentId;
             rentalSystem.removeApartment(apartmentId);
             break;
         }
-        case 5:
+        case 6: {
+            int apartmentId;
+            double rating;
+            std::cout << "Введите ID квартиры для оценки: ";
+            std::cin >> apartmentId;
+            std::cout << "Введите рейтинг (0-5): ";
+            std::cin >> rating;
+            rentalSystem.rateApartment(apartmentId, rating);
+            break;
+        }
+        case 7:
+            // Расчёт стоимости аренды
+            int apartmentId;
+            int rentalDays;
+            std::cout << "Введите ID квартиры для расчёта стоимости аренды: ";
+            std::cin >> apartmentId;
+            std::cout << "Введите количество дней аренды: ";
+            std::cin >> rentalDays;
+            rentalSystem.calculateRentalCost(apartmentId, rentalDays);
+            break;
+        case 8:
+            // Сравнение квартир
+            int apartmentId1, apartmentId2;
+            std::cout << "Введите ID первой квартиры для сравнения: ";
+            std::cin >> apartmentId1;
+            std::cout << "Введите ID второй квартиры для сравнения: ";
+            std::cin >> apartmentId2;
+            rentalSystem.compareApartments(apartmentId1, apartmentId2);
+            break;
+        case 9:
             return; // Возвращаемся в главное меню
         default:
             std::cout << "Неверный выбор, попробуйте снова.\n";

@@ -1,7 +1,15 @@
 #include "Apartment.h"
 
 Apartment::Apartment(int id, const std::string& location, double price, bool available)
-    : id(id), location(location), price(price), available(available) {}
+    : id(id), location(location), price(price), available(available), rating(0.0) {} // Инициализация рейтинга
+
+double Apartment::getRating() const {
+    return rating;
+}
+
+void Apartment::setRating(double rating) {
+    this->rating = rating;
+}
 
 int Apartment::getId() const {
     return id;

@@ -1,2 +1,0 @@
-Иван Иванов,ivan@example.com
-Мария Петрова,maria@example.com
