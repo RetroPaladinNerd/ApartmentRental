@@ -1,4 +1,5 @@
 #include "Apartment.h"
+#include <iostream>
 
 Apartment::Apartment(int id, const std::string& location, double price, bool available)
     : id(id), location(location), price(price), available(available), rating(0.0) {} // Инициализация рейтинга
@@ -29,4 +30,27 @@ bool Apartment::isAvailable() const {
 
 void Apartment::setAvailable(bool available) {
     this->available = available;
+}
+
+void displayApartmentInfo(const Apartment& apartment) {
+    std::cout << "Квартира ID: " << apartment.id
+        << "\nМестоположение: " << apartment.location
+        << "\nЦена: $" << apartment.price
+        << "\nДоступность: " << (apartment.available ? "Доступна" : "Недоступна") << "\n";
+}
+
+bool Apartment::operator==(const Apartment & other) const {
+        return this->id == other.id;
+}
+
+bool Apartment::operator>(const Apartment& other) const {
+        return this->price > other.price;
+}
+
+std::ostream& operator<<(std::ostream& os, const Apartment& apartment) {
+    os << "Квартира ID: " << apartment.id
+        << "\nМестоположение: " << apartment.location
+        << "\nЦена: $" << apartment.price
+        << "\nДоступность: " << (apartment.available ? "Доступна" : "Недоступна") << "\n";
+    return os;
 }

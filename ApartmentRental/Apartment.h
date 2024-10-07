@@ -23,7 +23,14 @@ private:
     std::string location;
     double price;
     bool available;
-    double rating; // Новое поле для хранения рейтинга
+    double rating; 
+
+    friend void displayApartmentInfo(const Apartment& apartment); // Дружественная функция
+
+    bool operator==(const Apartment& other) const; // перегрузка
+    bool operator>(const Apartment& other) const; // сравнение цен
+    friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment); // удобный вывод
+
 };
 
 #endif // APARTMENT_H
