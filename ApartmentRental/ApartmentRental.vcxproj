@@ -18,6 +18,17 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Apartment.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Rentalsystem.cpp" />
+    <ClCompile Include="User.cpp" />
+    <ClCompile Include="User.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Apartment.h" />
+    <ClInclude Include="RentalSystem.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -127,22 +138,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="LandLord.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Apartment.cpp" />
-    <ClCompile Include="Currency.cpp" />
-    <ClCompile Include="RentalSystem.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Apartment.h" />
-    <ClInclude Include="Currency.h" />
-    <ClInclude Include="LandLord.h" />
-    <ClInclude Include="RentalSystem.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

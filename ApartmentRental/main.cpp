@@ -1,45 +1,86 @@
-п»ї#include <iostream>
+#include <iostream>
 #include "RentalSystem.h"
-#include "Landlord.h"
+#include "User.h"
 
-void displayMainMenu() {
-    std::cout << "\nР’С‹Р±РµСЂРёС‚Рµ СЂРµР¶РёРј СЂР°Р±РѕС‚С‹:\n";
-    std::cout << "1. Р РµР¶РёРј Р°СЂРµРЅРґРѕРґР°С‚РµР»СЏ\n";
-    std::cout << "2. Р РµР¶РёРј Р°СЂРµРЅРґР°С‚РѕСЂР°\n";
-    std::cout << "0. Р’С‹Р№С‚Рё\n";
-    std::cout << "Р’РІРµРґРёС‚Рµ РІР°С€ РІС‹Р±РѕСЂ: ";
+void displayMenu() {
+    std::cout << "Меню системы аренды квартир:\n";
+    std::cout << "1. Показать доступные квартиры\n";
+    std::cout << "2. Арендовать квартиру\n";
+    std::cout << "3. Вернуть квартиру\n";
+    std::cout << "4. Удалить квартиру\n";
+    std::cout << "5. Загрузить квартиры из файла\n";
+    std::cout << "6. Сохранить квартиры в файл\n";
+    std::cout << "7. Загрузить пользователей из файла\n";
+    std::cout << "8. Сохранить пользователей в файл\n";
+    std::cout << "9. Выход\n";
 }
 
 int main() {
-    system("chcp 1251");
-    system("cls");
+    RentalSystem rentalSystem;
+    std::system("chcp 1251");
+    std::system("cls");
+    // Загружаем данные из файлов, если они существуют
+    rentalSystem.loadApartmentsFromFile("C:/Users/Admin/source/repos/ApartmentRental/ApartmentRental/apartments.txt");
+    rentalSystem.loadUsersFromFile("C:/Users/Admin/source/repos/ApartmentRental/ApartmentRental/users.txt");
 
-    std::string name;
-    std::cout << "Р’РІРµРґРёС‚Рµ РІР°С€Рµ РёРјСЏ: ";
-    std::cin >> name;
-
-    Landlord landlord(name);  // РћРґРёРЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РјРѕР¶РµС‚ Р±С‹С‚СЊ Рё Р°СЂРµРЅРґРѕРґР°С‚РµР»РµРј, Рё Р°СЂРµРЅРґР°С‚РѕСЂРѕРј
-    int choice;
-
-    do {
-        displayMainMenu();
-        std::cin >> choice;
+    while (true) {
+        displayMenu();
+        int choice;
+        std::cout << "Введите ваш выбор: ";
+        std::cin >> choice; // Получаем выбор пользователя
 
         switch (choice) {
         case 1:
-            landlord.landlordMenu();
+            rentalSystem.displayAvailableApartments();
             break;
-        case 2:
-            landlord.tenantMenu();
-            break;
-        case 0:
-            std::cout << "Р’С‹С…РѕРґ РёР· РїСЂРѕРіСЂР°РјРјС‹.\n";
-            break;
-        default:
-            std::cout << "РќРµРІРµСЂРЅС‹Р№ РІС‹Р±РѕСЂ. РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.\n";
+        case 2: {
+            std::string name, email;
+            std::cout << "Введите ваше имя: ";
+            std::cin.ignore(); // Игнорируем предыдущий ввод
+            std::getline(std::cin, name);
+            std::cout << "Введите ваш email: ";
+            std::getline(std::cin, email);
+
+            User user(name, email);
+            int apartmentId;
+            std::cout << "Введите ID квартиры для аренды: ";
+            std::cin >> apartmentId;
+            rentalSystem.rentApartment(apartmentId, user);
             break;
         }
-    } while (choice != 0);
+        case 3: {
+            int apartmentId;
+            std::cout << "Введите ID квартиры для возврата: ";
+            std::cin >> apartmentId;
+            rentalSystem.returnApartment(apartmentId);
+            break;
+        }
+        case 4: {
+            int apartmentId;
+            std::cout << "Введите ID квартиры для удаления: ";
+            std::cin >> apartmentId;
+            rentalSystem.removeApartment(apartmentId);
+            break;
+        }
+        case 5:
+            rentalSystem.loadApartmentsFromFile("data/apartments.txt");
+            break;
+        case 6:
+            rentalSystem.saveApartmentsToFile("data/apartments.txt");
+            break;
+        case 7:
+            rentalSystem.loadUsersFromFile("data/users.txt");
+            break;
+        case 8:
+            rentalSystem.saveUsersToFile("data/users.txt");
+            break;
+        case 9:
+            return 0;
+        default:
+            std::cout << "Неверный выбор, попробуйте снова.\n";
+        }
+        std::cout << std::endl; // Пустая строка для лучшего восприятия
+    }
 
     return 0;
 }

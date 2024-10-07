@@ -1,37 +1,24 @@
-#pragma once
+#ifndef APARTMENT_H
+#define APARTMENT_H
+
 #include <string>
-#include <vector>
-#include "Currency.h"
 
 class Apartment {
-private:
-    std::string address;
-    int rooms;
-    double rent;
-    Currency currency;
-    bool isAvailable = true;
-    std::vector<double> ratings;
-
 public:
-    Apartment(std::string_view address, int rooms, double rent, Currency currency);
+    Apartment(int id, const std::string& location, double price, bool available);
 
-    void showInfo(int index) const;
-    double getAverageRating() const;
-    void addRating(double rating);
+    int getId() const;
+    std::string getLocation() const;
+    double getPrice() const;
+    bool isAvailable() const;
 
-    std::string getAddress() const;
-    void setAddress(std::string_view newAddress);
+    void setAvailable(bool available);
 
-    int getRooms() const;
-    void setRooms(int newRooms);
-
-    double getRent() const;
-    void setRent(double newRent);
-
-    Currency getCurrency() const;
-    void setCurrency(Currency newCurrency);
-
-    bool getAvailability() const;
-    void rentApartment();
-    void freeApartment();
+private:
+    int id;
+    std::string location;
+    double price;
+    bool available;
 };
+
+#endif // APARTMENT_H

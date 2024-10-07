@@ -1,27 +1,26 @@
-#pragma once
+#ifndef RENTALSYSTEM_H
+#define RENTALSYSTEM_H
+
 #include <vector>
+#include <string>
 #include "Apartment.h"
-#include "Landlord.h"
+#include "User.h"
 
 class RentalSystem {
+public:
+    void addApartment(const Apartment& apartment);
+    void displayAvailableApartments() const;
+    bool rentApartment(int apartmentId, const User& user);
+    bool returnApartment(int apartmentId);
+    bool removeApartment(int apartmentId);
+    void loadApartmentsFromFile(const std::string& filename);
+    void saveApartmentsToFile(const std::string& filename) const;
+    void loadUsersFromFile(const std::string& filename);
+    void saveUsersToFile(const std::string& filename) const;
+
 private:
     std::vector<Apartment> apartments;
-    std::vector<Landlord> landlords;  // Список арендодателей
-
-public:
-    // Методы для управления квартирами
-    void addApartment();
-    void showAllApartments() const;
-    void searchApartmentByPrice(double minPrice, double maxPrice) const;
-    void sortApartmentsByPrice();
-    void rateApartment();
-    void rentApartment();
-    void freeApartment();
-
-    // Методы для работы с арендодателями
-    void addLandlord(const std::string& name);
-    void showLandlords() const;
-    void landlordAddApartmentToRent(int landlordIndex, int apartmentIndex);
-    void landlordRentApartment(int landlordIndex, int apartmentIndex);
-    void landlordFreeRentedApartment(int landlordIndex);
+    std::vector<User> users;
 };
+
+#endif // RENTALSYSTEM_H

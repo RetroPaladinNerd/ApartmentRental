@@ -1,92 +1,118 @@
 #include "RentalSystem.h"
 #include <iostream>
-#include <format>
-#include <ranges>
+#include <fstream>
+#include <sstream>
 
-void RentalSystem::addApartment() {
-    std::string address;
-    std::cout << "Введите адрес квартиры: ";
-    std::cin.ignore();
-    std::getline(std::cin, address);
-
-    int rooms;
-    std::cout << "Введите количество комнат: ";
-    std::cin >> rooms;
-
-    double rent;
-    std::cout << "Введите стоимость аренды: ";
-    std::cin >> rent;
-
-    int currencyChoice;
-    std::cout << "Выберите валюту:\n1. BYN\n2. USD\n3. EUR\nВведите ваш выбор: ";
-    std::cin >> currencyChoice;
-
-    Currency currency = (currencyChoice == 2) ? Currency::USD :
-        (currencyChoice == 3) ? Currency::EUR : Currency::BYN;
-
-    apartments.emplace_back(address, rooms, rent, currency);
-    std::cout << "Квартира добавлена успешно.\n";
+void RentalSystem::addApartment(const Apartment& apartment) {
+    apartments.push_back(apartment);
 }
 
-void RentalSystem::showAllApartments() const {
-    if (apartments.empty()) {
-        std::cout << "Нет доступных квартир.\n";
+void RentalSystem::displayAvailableApartments() const {
+    std::cout << "Доступные квартиры:\n";
+    for (const auto& apartment : apartments) {
+        if (apartment.isAvailable()) {
+            std::cout << "ID: " << apartment.getId() << ", Местоположение: "
+                << apartment.getLocation() << ", Цена: $"
+                << apartment.getPrice() << "\n";
+        }
+    }
+}
+
+bool RentalSystem::rentApartment(int apartmentId, const User& user) {
+    for (auto& apartment : apartments) {
+        if (apartment.getId() == apartmentId && apartment.isAvailable()) {
+            apartment.setAvailable(false);
+            users.push_back(user);
+            std::cout << user.getName() << " арендовал квартиру с ID: "
+                << apartmentId << "\n";
+            return true;
+        }
+    }
+    std::cout << "Квартира с ID " << apartmentId << " недоступна.\n";
+    return false;
+}
+
+bool RentalSystem::returnApartment(int apartmentId) {
+    for (auto& apartment : apartments) {
+        if (apartment.getId() == apartmentId && !apartment.isAvailable()) {
+            apartment.setAvailable(true);
+            std::cout << "Квартира с ID " << apartmentId << " была возвращена.\n";
+            return true;
+        }
+    }
+    std::cout << "Квартира с ID " << apartmentId << " в данный момент не арендована.\n";
+    return false;
+}
+
+bool RentalSystem::removeApartment(int apartmentId) {
+    for (auto it = apartments.begin(); it != apartments.end(); ++it) {
+        if (it->getId() == apartmentId) {
+            apartments.erase(it);
+            std::cout << "Квартира с ID " << apartmentId << " была удалена.\n";
+            return true;
+        }
+    }
+    std::cout << "Квартира с ID " << apartmentId << " не найдена.\n";
+    return false;
+}
+
+void RentalSystem::loadApartmentsFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Не удалось открыть файл: " << filename << std::endl;
         return;
     }
-    for (size_t i = 0; i < apartments.size(); ++i) {
-        apartments[i].showInfo(i + 1);
-        std::cout << "------------------------" << std::endl;
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        int id;
+        std::string location;
+        double price;
+        bool available;
+
+        if (iss >> id >> std::ws) {
+            std::getline(iss, location, ',');
+            iss >> price >> available;
+            addApartment(Apartment(id, location, price, available));
+        }
     }
+    file.close();
 }
 
-// Другие методы без изменений...
-
-// Добавление арендодателя
-void RentalSystem::addLandlord(const std::string& name) {
-    landlords.emplace_back(name);
-    std::cout << std::format("Арендодатель {} добавлен в систему.\n", name);
+void RentalSystem::saveApartmentsToFile(const std::string& filename) const {
+    std::ofstream file(filename);
+    for (const auto& apartment : apartments) {
+        file << apartment.getId() << " "
+            << apartment.getLocation() << ","
+            << apartment.getPrice() << " "
+            << apartment.isAvailable() << "\n";
+    }
+    file.close();
 }
 
-// Показ всех арендодателей
-void RentalSystem::showLandlords() const {
-    if (landlords.empty()) {
-        std::cout << "Нет зарегистрированных арендодателей.\n";
+void RentalSystem::loadUsersFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Не удалось открыть файл: " << filename << std::endl;
         return;
     }
-    for (size_t i = 0; i < landlords.size(); ++i) {
-        std::cout << std::format("Арендодатель #{}: {}\n", i + 1, landlords[i].getName());
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string name, email;
+        std::getline(iss, name, ',');
+        std::getline(iss, email);
+        users.push_back(User(name, email));
     }
+    file.close();
 }
 
-// Добавление квартиры арендодателю для сдачи
-void RentalSystem::landlordAddApartmentToRent(int landlordIndex, int apartmentIndex) {
-    if (landlordIndex >= 1 && landlordIndex <= landlords.size() &&
-        apartmentIndex >= 1 && apartmentIndex <= apartments.size()) {
-        landlords[landlordIndex - 1].addOwnedApartment(&apartments[apartmentIndex - 1]);
+void RentalSystem::saveUsersToFile(const std::string& filename) const {
+    std::ofstream file(filename);
+    for (const auto& user : users) {
+        file << user.toString() << "\n";
     }
-    else {
-        std::cout << "Неверный индекс арендодателя или квартиры.\n";
-    }
+    file.close();
 }
-
-// Аренда квартиры арендодателем
-void RentalSystem::landlordRentApartment(int landlordIndex, int apartmentIndex) {
-    if (landlordIndex >= 1 && landlordIndex <= landlords.size() &&
-        apartmentIndex >= 1 && apartmentIndex <= apartments.size()) {
-        landlords[landlordIndex - 1].rentApartment(apartments[apartmentIndex - 1]);
-    }
-    else {
-        std::cout << "Неверный индекс арендодателя или квартиры.\n";
-    }
-}
-
-// Освобождение арендованной квартиры арендодателем
-void RentalSystem::landlordFreeRentedApartment(int landlordIndex) {
-    if (landlordIndex >= 1 && landlordIndex <= landlords.size()) {
-        landlords[landlordIndex - 1].freeRentedApartment();
-    }
-    else {
-        std::cout << "Неверный индекс арендодателя.\n";
-    }
-}
- 
