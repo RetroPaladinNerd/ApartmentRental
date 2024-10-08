@@ -17,10 +17,12 @@ public:
     bool isAvailable() const;
     void setAvailable(bool availableStatus);
 
-    // ƒружественные функции
+    // ќбъ€вление оператора вывода как дружественной функции
+    friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment);
+
+    // ƒругие дружественные операторы
     friend bool operator==(const Apartment& lhs, const Apartment& rhs);
     friend std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs);
-    friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment); // ќбъ€вление как друга
 
 private:
     int id;
