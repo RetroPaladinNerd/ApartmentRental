@@ -29,7 +29,7 @@ void RentalSystem::rateApartment(int apartmentId, double rating) {
     std::cout << " вартира с ID " << apartmentId << " не найдена.\n";
 }
 
-double RentalSystem::getCurrencyRate(const std::string& currency) const {
+double RentalSystem::getCurrencyRate(std::string_view currency) const {
     if (currency == "USD") return 1.0;
     if (currency == "EUR") return 0.85;
     if (currency == "GBP") return 3.20;

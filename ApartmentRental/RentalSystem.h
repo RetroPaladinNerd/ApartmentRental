@@ -19,7 +19,7 @@ public:
     void addUser(const User& user);
     void displayUsers() const;
 
-    double getCurrencyRate(const std::string& currency) const; // Метод для получения курса валюты
+    double getCurrencyRate(std::string_view currency) const; // Метод для получения курса валюты
     double calculateRentalCost(int apartmentId, int rentalDays) const;
     void compareApartments(int apartmentId1, int apartmentId2) const;
     
