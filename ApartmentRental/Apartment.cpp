@@ -42,12 +42,3 @@ bool operator==(const Apartment& lhs, const Apartment& rhs) {
 std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs) {
     return lhs.price <=> rhs.price;
 }
-
-// Оператор вывода информации о квартире как скрытый друг, реализованный в Apartment.cpp
-std::ostream& operator<<(std::ostream& os, const Apartment& apartment) {
-    os << "Квартира ID: " << apartment.id
-        << "\nМестоположение: " << apartment.location
-        << "\nЦена: $" << apartment.price
-        << "\nДоступность: " << (apartment.available ? "Доступна" : "Недоступна") << "\n";
-    return os;
-}

@@ -17,8 +17,14 @@ public:
     bool isAvailable() const;
     void setAvailable(bool availableStatus);
 
-    // Объявление оператора вывода как дружественной функции
-    friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment);
+    // Объявление и определение оператора вывода как скрытого друга
+    friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment) {
+        os << "Квартира ID: " << apartment.id
+            << "\nМестоположение: " << apartment.location
+            << "\nЦена: $" << apartment.price
+            << "\nДоступность: " << (apartment.available ? "Доступна" : "Недоступна") << "\n";
+        return os;
+    }
 
     // Другие дружественные операторы
     friend bool operator==(const Apartment& lhs, const Apartment& rhs);
