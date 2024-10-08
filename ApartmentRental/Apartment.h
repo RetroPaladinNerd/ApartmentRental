@@ -2,35 +2,35 @@
 #define APARTMENT_H
 
 #include <string>
+#include <compare>  // Для оператора <=> в C++20
+#include <iostream>
 
 class Apartment {
 public:
     Apartment(int id, const std::string& location, double price, bool available);
 
+    // Методы
+    double getRating() const;
+    void setRating(double newRating);
     int getId() const;
     std::string getLocation() const;
     double getPrice() const;
     bool isAvailable() const;
+    void setAvailable(bool isAvailable);
 
-    // Рейтинг
-    void setRating(double rating);
-    double getRating() const;
+    // Объявляем перегруженные операторы как скрытых друзей
+    friend bool operator==(const Apartment& lhs, const Apartment& rhs);  // Скрытый друг для оператора ==
+    friend std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs);  // Скрытый друг для оператора <=>
 
-    void setAvailable(bool available);
+    // Вывод информации о квартире
+    friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment);
 
 private:
     int id;
     std::string location;
     double price;
     bool available;
-    double rating = 0.0; 
-
-    friend void displayApartmentInfo(const Apartment& apartment); // Дружественная функция
-
-    bool operator==(const Apartment& other) const; // перегрузка
-    bool operator>(const Apartment& other) const; // сравнение цен
-    friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment); // удобный вывод
-
+    double rating = 0.0;  // Инициализация рейтинга по умолчанию
 };
 
 #endif // APARTMENT_H

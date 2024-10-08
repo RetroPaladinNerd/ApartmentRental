@@ -2,14 +2,14 @@
 #include <iostream>
 
 Apartment::Apartment(int id, const std::string& location, double price, bool available)
-    : id(id), location(location), price(price), available(available) {} // Инициализация рейтинга
+    : id(id), location(location), price(price), available(available) {}
 
 double Apartment::getRating() const {
     return rating;
 }
 
 void Apartment::setRating(double newRating) {
-    rating = newRating;  // Теперь имя параметра не конфликтует с именем члена класса
+    rating = newRating;
 }
 
 int Apartment::getId() const {
@@ -29,24 +29,21 @@ bool Apartment::isAvailable() const {
 }
 
 void Apartment::setAvailable(bool isAvailable) {
-    available = isAvailable;  // Нет затенения, можно просто присвоить значение
+    available = isAvailable;
 }
 
-void displayApartmentInfo(const Apartment& apartment) {
-    std::cout << "Квартира ID: " << apartment.id
-        << "\nМестоположение: " << apartment.location
-        << "\nЦена: $" << apartment.price
-        << "\nДоступность: " << (apartment.available ? "Доступна" : "Недоступна") << "\n";
+// Реализация оператора == как скрытого друга
+bool operator==(const Apartment& lhs, const Apartment& rhs) {
+    return lhs.id == rhs.id && lhs.location == rhs.location &&
+        lhs.price == rhs.price && lhs.available == rhs.available;
 }
 
-bool Apartment::operator==(const Apartment & other) const {
-        return this->id == other.id;
+// Реализация оператора <=> как скрытого друга с использованием partial_ordering
+std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs) {
+    return lhs.price <=> rhs.price;  // Сравнение по цене
 }
 
-bool Apartment::operator>(const Apartment& other) const {
-        return this->price > other.price;
-}
-
+// Оператор вывода информации о квартире
 std::ostream& operator<<(std::ostream& os, const Apartment& apartment) {
     os << "Квартира ID: " << apartment.id
         << "\nМестоположение: " << apartment.location
