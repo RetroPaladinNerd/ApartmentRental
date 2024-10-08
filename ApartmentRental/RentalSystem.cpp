@@ -206,8 +206,8 @@ void RentalSystem::loadUsersFromFile(const std::string& filename) {
     std::string line;
     while (std::getline(inFile, line)) {
         std::stringstream ss(line);
-        std::string name, email;
-
+        std::string name;
+        std::string email;
         std::getline(ss, name, ','); // Читаем имя до запятой
         std::getline(ss, email);     // Читаем email до конца строки
 

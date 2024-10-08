@@ -56,7 +56,8 @@ void apartmentMenu(RentalSystem& rentalSystem) {
 
             double rate = rentalSystem.getCurrencyRate(currency); // Получаем курс валюты
 
-            std::string name, email;
+            std::string name;
+            std::string email;
             std::cout << "Введите ваше имя: ";
             std::cin.ignore();
             std::getline(std::cin, name);
@@ -107,7 +108,8 @@ void apartmentMenu(RentalSystem& rentalSystem) {
             break;
         case 8:
             // Сравнение квартир
-            int apartmentId1, apartmentId2;
+            int apartmentId1;
+            int apartmentId2;
             std::cout << "Введите ID первой квартиры для сравнения: ";
             std::cin >> apartmentId1;
             std::cout << "Введите ID второй квартиры для сравнения: ";
@@ -143,7 +145,8 @@ void userMenu(RentalSystem& rentalSystem) {
 
         switch (choice) {
         case 1: {
-            std::string name, email;
+            std::string name;
+            std::string email;
             std::cout << "Введите имя пользователя: ";
             std::cin.ignore();
             std::getline(std::cin, name);
