@@ -8,8 +8,8 @@ double Apartment::getRating() const {
     return rating;
 }
 
-void Apartment::setRating(double rating) {
-    this->rating = rating;
+void Apartment::setRating(double newRating) {
+    rating = newRating;  // Теперь имя параметра не конфликтует с именем члена класса
 }
 
 int Apartment::getId() const {
