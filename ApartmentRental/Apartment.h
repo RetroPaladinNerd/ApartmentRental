@@ -9,7 +9,6 @@ class Apartment {
 public:
     Apartment(int id, const std::string& location, double price, bool available);
 
-    // Методы
     double getRating() const;
     void setRating(double newRating);
     int getId() const;
@@ -18,11 +17,9 @@ public:
     bool isAvailable() const;
     void setAvailable(bool isAvailable);
 
-    // Объявляем перегруженные операторы как скрытых друзей
-    friend bool operator==(const Apartment& lhs, const Apartment& rhs);  // Скрытый друг для оператора ==
-    friend std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs);  // Скрытый друг для оператора <=>
-
-    // Вывод информации о квартире
+    // Дружественные функции для перегруженных операторов
+    friend bool operator==(const Apartment& lhs, const Apartment& rhs);
+    friend std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs);
     friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment);
 
 private:
