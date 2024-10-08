@@ -10,17 +10,16 @@ public:
     Apartment(int id, const std::string& location, double price, bool available);
 
     double getRating() const;
-    void setRating(double newRating);
+    void setRating(double rating);  // Изменено имя параметра
     int getId() const;
     std::string getLocation() const;
     double getPrice() const;
     bool isAvailable() const;
-    void setAvailable(bool isAvailable);
+    void setAvailable(bool availableStatus);  // Изменено имя параметра
 
     // Дружественные функции
     friend bool operator==(const Apartment& lhs, const Apartment& rhs);
     friend std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs);
-    // Оператор вывода как скрытый друг
     friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment);
 
 private:
