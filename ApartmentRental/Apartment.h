@@ -17,7 +17,16 @@ public:
     bool isAvailable() const;
     void setAvailable(bool availableStatus);
 
-    // Объявление и определение оператора вывода как скрытого друга
+    // Дружественные операторы как скрытые друзья
+    friend bool operator==(const Apartment& lhs, const Apartment& rhs) {
+        return lhs.id == rhs.id && lhs.location == rhs.location &&
+            lhs.price == rhs.price && lhs.available == rhs.available;
+    }
+
+    friend std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs) {
+        return lhs.price <=> rhs.price;  // Сравнение только по цене
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment) {
         os << "Квартира ID: " << apartment.id
             << "\nМестоположение: " << apartment.location
@@ -25,10 +34,6 @@ public:
             << "\nДоступность: " << (apartment.available ? "Доступна" : "Недоступна") << "\n";
         return os;
     }
-
-    // Другие дружественные операторы
-    friend bool operator==(const Apartment& lhs, const Apartment& rhs);
-    friend std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs);
 
 private:
     int id;

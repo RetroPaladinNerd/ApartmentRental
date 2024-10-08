@@ -31,14 +31,3 @@ bool Apartment::isAvailable() const {
 void Apartment::setAvailable(bool isAvailable) {
     available = isAvailable;
 }
-
-// Оператор == как скрытый друг
-bool operator==(const Apartment& lhs, const Apartment& rhs) {
-    return lhs.id == rhs.id && lhs.location == rhs.location &&
-        lhs.price == rhs.price && lhs.available == rhs.available;
-}
-
-// Оператор <=> как скрытый друг
-std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs) {
-    return lhs.price <=> rhs.price;
-}
