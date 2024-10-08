@@ -17,9 +17,10 @@ public:
     bool isAvailable() const;
     void setAvailable(bool isAvailable);
 
-    // Дружественные функции для перегруженных операторов
+    // Дружественные функции
     friend bool operator==(const Apartment& lhs, const Apartment& rhs);
     friend std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs);
+    // Оператор вывода как скрытый друг
     friend std::ostream& operator<<(std::ostream& os, const Apartment& apartment);
 
 private:

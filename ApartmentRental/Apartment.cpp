@@ -32,18 +32,18 @@ void Apartment::setAvailable(bool isAvailable) {
     available = isAvailable;
 }
 
-// Реализация оператора == как скрытого друга
+// Оператор == как скрытый друг
 bool operator==(const Apartment& lhs, const Apartment& rhs) {
     return lhs.id == rhs.id && lhs.location == rhs.location &&
         lhs.price == rhs.price && lhs.available == rhs.available;
 }
 
-// Реализация оператора <=> как скрытого друга с использованием partial_ordering
+// Оператор <=> как скрытый друг
 std::partial_ordering operator<=>(const Apartment& lhs, const Apartment& rhs) {
-    return lhs.price <=> rhs.price;  // Сравнение по цене
+    return lhs.price <=> rhs.price;
 }
 
-// Оператор вывода информации о квартире
+// Оператор вывода информации о квартире как скрытый друг
 std::ostream& operator<<(std::ostream& os, const Apartment& apartment) {
     os << "Квартира ID: " << apartment.id
         << "\nМестоположение: " << apartment.location
