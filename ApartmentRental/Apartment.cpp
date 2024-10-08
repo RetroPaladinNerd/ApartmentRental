@@ -28,8 +28,8 @@ bool Apartment::isAvailable() const {
     return available;
 }
 
-void Apartment::setAvailable(bool available) {
-    this->available = available;
+void Apartment::setAvailable(bool isAvailable) {
+    available = isAvailable;  // Ќет затенени€, можно просто присвоить значение
 }
 
 void displayApartmentInfo(const Apartment& apartment) {
