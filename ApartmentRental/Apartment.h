@@ -23,7 +23,7 @@ private:
     std::string location;
     double price;
     bool available;
-    double rating; 
+    double rating = 0.0; 
 
     friend void displayApartmentInfo(const Apartment& apartment); // Дружественная функция
 
