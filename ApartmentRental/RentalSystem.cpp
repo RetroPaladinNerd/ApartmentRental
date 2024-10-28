@@ -3,217 +3,316 @@
 #include <fstream>
 #include <sstream>
 
-void RentalSystem::addApartment(const Apartment& apartment) {
-    apartments.push_back(apartment);
+// Конструктор: открытие базы данных
+RentalSystem::RentalSystem() {
+    openDB();
 }
 
-void RentalSystem::displayAvailableApartments() const {
-    std::cout << "Доступные квартиры:\n";
-    for (const auto& apartment : apartments) {
-        if (apartment.isAvailable()) {
-            std::cout << "ID: " << apartment.getId() << ", Местоположение: "
-                << apartment.getLocation() << ", Цена: $"
-                << apartment.getPrice() << "\n";
-        }
+// Деструктор: закрытие базы данных
+RentalSystem::~RentalSystem() {
+    closeDB();
+}
+
+// Выполнение SQL-запроса
+void RentalSystem::executeSQL(const std::string& sql) const {
+    char* errMsg = nullptr;
+    int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Ошибка выполнения SQL: " << errMsg << "\n";
+        sqlite3_free(errMsg);
     }
 }
 
-void RentalSystem::rateApartment(int apartmentId, double rating) {
-    for (auto& apartment : apartments) {
-        if (apartment.getId() == apartmentId) {
-            apartment.setRating(rating);
-            std::cout << "Рейтинг для квартиры с ID " << apartmentId << " установлен на " << rating << ".\n";
+// Открытие базы данных SQLite
+void RentalSystem::openDB() {
+    int rc = sqlite3_open("rental_system.db", &db);
+    if (rc) {
+        std::cerr << "Ошибка открытия базы данных: " << sqlite3_errmsg(db) << "\n";
+    }
+    else {
+        std::cout << "База данных успешна открыта.\n";
+    }
+
+    // Создание таблиц, если их нет
+    std::string createApartmentsTable = R"(
+        CREATE TABLE IF NOT EXISTS apartments (
+            id INTEGER PRIMARY KEY,
+            location TEXT NOT NULL,
+            price REAL NOT NULL,
+            available INTEGER NOT NULL,
+            rating REAL DEFAULT 0
+        );
+    )";
+
+    std::string createUsersTable = R"(
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL
+        );
+    )";
+
+    executeSQL(createApartmentsTable);
+    executeSQL(createUsersTable);
+}
+
+// Закрытие базы данных SQLite
+void RentalSystem::closeDB() {
+    sqlite3_close(db);
+}
+
+// Добавление квартиры в базу данных
+void RentalSystem::addApartmentToDB(const Apartment& apartment) {
+    std::stringstream ss;
+    ss << "INSERT INTO apartments (id, location, price, available, rating) VALUES ("
+        << apartment.getId() << ", '"
+        << apartment.getLocation() << "', "
+        << apartment.getPrice() << ", "
+        << (apartment.isAvailable() ? 1 : 0) << ", "
+        << apartment.getRating() << ");";
+
+    executeSQL(ss.str());
+    std::cout << "Квартира добавлена в базу данных. \n";
+}
+
+// Отображение доступных квартир из базы данных
+void RentalSystem::displayAvailableApartmentsFromDB() const {
+    std::string sql = "SELECT id, location, price FROM apartments WHERE available = 1;";
+    sqlite3_stmt* stmt;
+    int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+
+    if (rc != SQLITE_OK) {
+        std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << "\n";
+        return;
+    }
+
+    std::cout << "Доступные квартиры:\n";
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int id = sqlite3_column_int(stmt, 0);
+        const char* location = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        double price = sqlite3_column_double(stmt, 2);
+
+        std::cout << "ID: " << id << ", Местоположение: " << location << ", Цена: $" << price << "\n";
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+bool RentalSystem::rentApartmentFromDB(int apartmentId, const User& user) {
+    // Проверка доступности квартиры
+    std::string checkAvailabilitySQL = "SELECT price, available FROM apartments WHERE id = " + std::to_string(apartmentId) + ";";
+    sqlite3_stmt* stmt;
+    int rc = sqlite3_prepare_v2(db, checkAvailabilitySQL.c_str(), -1, &stmt, nullptr);
+
+    if (rc != SQLITE_OK) {
+        std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << "\n";
+        return false;
+    }
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        double price = sqlite3_column_double(stmt, 0);
+        int available = sqlite3_column_int(stmt, 1);
+        if (available == 0) {
+            std::cout << "Квартира с ID " << apartmentId << " недоступна.\n";
+            sqlite3_finalize(stmt);
+            return false;
+        }
+
+        // Обновление статуса доступности квартиры
+        std::string updateSQL = "UPDATE apartments SET available = 0 WHERE id = " + std::to_string(apartmentId) + ";";
+        executeSQL(updateSQL);
+
+        // Добавление пользователя в базу данных
+        addUserToDB(user);
+
+        // Сообщаем об успешной аренде
+        std::cout << user.getName() << " арендовал квартиру с ID: " << apartmentId
+            << " за " << price << " долларов.\n";  // Предполагаем, что цена в рублях
+
+        sqlite3_finalize(stmt);
+        return true;
+    }
+
+    sqlite3_finalize(stmt);
+    return false;
+}
+
+// Возврат квартиры
+bool RentalSystem::returnApartmentToDB(int apartmentId) {
+    std::string updateSQL = "UPDATE apartments SET available = 1 WHERE id = " + std::to_string(apartmentId) + ";";
+    executeSQL(updateSQL);
+    std::cout << "Квартира с ID " << apartmentId << " была возвращена.\n";
+    return true;
+}
+
+// Удаление квартиры из базы данных
+bool RentalSystem::removeApartmentFromDB(int apartmentId) {
+    std::string deleteSQL = "DELETE FROM apartments WHERE id = " + std::to_string(apartmentId) + ";";
+    executeSQL(deleteSQL);
+    std::cout << "Квартира с ID " << apartmentId << " была удалена.\n";
+    return true;
+}
+
+// Добавление пользователя в базу данных
+void RentalSystem::addUserToDB(const User& user) {
+    std::stringstream ss;
+    ss << "INSERT INTO users (name, email) VALUES ('"
+        << user.getName() << "', '"
+        << user.getEmail() << "');";
+    executeSQL(ss.str());
+}
+
+// Отображение всех пользователей из базы данных
+void RentalSystem::displayUsersFromDB() const {
+    std::string sql = "SELECT name, email FROM users;";
+    sqlite3_stmt* stmt;
+    int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+
+    if (rc != SQLITE_OK) {
+        std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << "\n";
+        return;
+    }
+
+    std::cout << "Пользователи:\n";
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        const char* name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+        const char* email = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        std::cout << "Имя: " << name << ", Email: " << email << "\n";
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+void RentalSystem::rateApartmentInDB(int apartmentId, double rating) {
+    // Проверим, что рейтинг находится в допустимом диапазоне
+    if (rating < 1.0 || rating > 5.0) {
+        std::cout << "Ошибка: Оценка должна быть в диапазоне от 1 до 5." << std::endl;
+        return;
+    }
+
+    sqlite3* db;
+    char* errorMessage = nullptr;
+
+    // Открываем соединение с базой данных
+    int rc = sqlite3_open("rental_system.db", &db);
+    if (rc) {
+        std::cerr << "Не удалось открыть базу данных: " << sqlite3_errmsg(db) << std::endl;
+        return;
+    }
+
+    // SQL-запрос для проверки наличия квартиры с данным ID
+    std::string checkQuery = "SELECT COUNT(*) FROM apartments WHERE id = ?;";
+    sqlite3_stmt* stmt;
+
+    // Подготавливаем запрос
+    rc = sqlite3_prepare_v2(db, checkQuery.c_str(), -1, &stmt, nullptr);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Ошибка подготовки запроса: " << sqlite3_errmsg(db) << std::endl;
+        sqlite3_close(db);
+        return;
+    }
+
+    // Привязываем параметр (ID квартиры) к запросу
+    sqlite3_bind_int(stmt, 1, apartmentId);
+
+    // Выполняем запрос
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW) {
+        int count = sqlite3_column_int(stmt, 0); // Получаем количество квартир с данным ID
+        if (count == 0) {
+            std::cout << "Квартира с ID " << apartmentId << " не найдена." << std::endl;
+            sqlite3_finalize(stmt);
+            sqlite3_close(db);
             return;
         }
     }
-    std::cout << "Квартира с ID " << apartmentId << " не найдена.\n";
-}
-
-double RentalSystem::getCurrencyRate(std::string_view currency) const {
-    if (currency == "USD") return 1.0;
-    if (currency == "EUR") return 0.85;
-    if (currency == "GBP") return 3.20;
-    return 1.0; // По умолчанию USD
-}
-
-bool RentalSystem::rentApartment(int apartmentId, const User& user, double rate, const std::string& currency) {
-    for (auto& apartment : apartments) {
-        if (apartment.getId() == apartmentId && apartment.isAvailable()) {
-            apartment.setAvailable(false);
-            users.push_back(user);
-
-            double priceInCurrency = apartment.getPrice() * rate; // Пересчитываем цену
-
-            std::cout << user.getName() << " арендовал квартиру с ID: " << apartmentId
-                << " за " << priceInCurrency << " " << currency << ".\n";
-            return true;
-        }
+    else {
+        std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << std::endl;
+        sqlite3_finalize(stmt);
+        sqlite3_close(db);
+        return;
     }
-    std::cout << "Квартира с ID " << apartmentId << " недоступна.\n";
-    return false;
-}
+    sqlite3_finalize(stmt); // Завершаем проверку существования квартиры
 
-bool RentalSystem::returnApartment(int apartmentId) {
-    for (auto& apartment : apartments) {
-        if (apartment.getId() == apartmentId && !apartment.isAvailable()) {
-            apartment.setAvailable(true);
-            std::cout << "Квартира с ID " << apartmentId << " была возвращена.\n";
-            return true;
-        }
-    }
-    std::cout << "Квартира с ID " << apartmentId << " в данный момент не арендована.\n";
-    return false;
-}
-
-bool RentalSystem::removeApartment(int apartmentId) {
-    for (auto it = apartments.begin(); it != apartments.end(); ++it) {
-        if (it->getId() == apartmentId) {
-            apartments.erase(it);
-            std::cout << "Квартира с ID " << apartmentId << " была удалена.\n";
-            return true;
-        }
-    }
-    std::cout << "Квартира с ID " << apartmentId << " не найдена.\n";
-    return false;
-}
-
-void RentalSystem::addUser(const User& user) {
-    users.push_back(user);
-}
-
-void RentalSystem::displayUsers() const {
-    std::cout << "Пользователи:\n";
-    for (const auto& user : users) {
-        std::cout << "Имя: " << user.getName() << ", Email: " << user.getEmail() << "\n";
-    }
-}
-double RentalSystem::calculateRentalCost(int apartmentId, int rentalDays) const {
-    for (const auto& apartment : apartments) {
-        if (apartment.getId() == apartmentId) {
-            double basePrice = apartment.getPrice();
-            double totalCost = (basePrice * rentalDays)/30;
-
-            // Пример скидки для долгосрочной аренды (>30 дней)
-            if (rentalDays > 30) {
-                totalCost *= 0.85; // Скидка 15% на аренду более 30 дней
-            }
-
-            std::cout << "Итоговая стоимость аренды квартиры ID: " << apartmentId
-                << " на " << rentalDays << " дней составит: $" << totalCost << "\n";
-            return totalCost;
-        }
-    }
-    std::cout << "Квартира с ID " << apartmentId << " не найдена.\n";
-    return 0.0;
-}
-void RentalSystem::compareApartments(int apartmentId1, int apartmentId2) const {
-    const Apartment* apt1 = nullptr;
-    const Apartment* apt2 = nullptr;
-
-    // Поиск квартир с заданными ID
-    for (const auto& apartment : apartments) {
-        if (apartment.getId() == apartmentId1) apt1 = &apartment;
-        if (apartment.getId() == apartmentId2) apt2 = &apartment;
+    // SQL-запрос для обновления рейтинга квартиры
+    std::string updateQuery = "UPDATE apartments SET rating = ? WHERE id = ?;";
+    rc = sqlite3_prepare_v2(db, updateQuery.c_str(), -1, &stmt, nullptr);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Ошибка подготовки запроса обновления: " << sqlite3_errmsg(db) << std::endl;
+        sqlite3_close(db);
+        return;
     }
 
-    // Проверяем, найдены ли обе квартиры
-    if (apt1 && apt2) {
-        std::cout << "Сравнение квартир:\n";
+    // Привязываем параметры (рейтинг и ID квартиры) к запросу
+    sqlite3_bind_double(stmt, 1, rating);
+    sqlite3_bind_int(stmt, 2, apartmentId);
 
-        // Сравнение местоположения
-        std::cout << "Местоположение:\n";
-        std::cout << "Квартира 1: " << apt1->getLocation() << "\n";
-        std::cout << "Квартира 2: " << apt2->getLocation() << "\n";
-
-        // Сравнение цен
-        std::cout << "Цена:\n";
-        std::cout << "Квартира 1: $" << apt1->getPrice() << "\n";
-        std::cout << "Квартира 2: $" << apt2->getPrice() << "\n";
-
-        // Сравнение доступности
-        std::cout << "Доступность:\n";
-        std::cout << "Квартира 1: " << (apt1->isAvailable() ? "Доступна" : "Недоступна") << "\n";
-        std::cout << "Квартира 2: " << (apt2->isAvailable() ? "Доступна" : "Недоступна") << "\n";
+    // Выполняем запрос
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        std::cerr << "Ошибка обновления записи: " << sqlite3_errmsg(db) << std::endl;
     }
     else {
-        std::cout << "Одна или обе квартиры с указанными ID не найдены.\n";
+        std::cout << "Рейтинг квартиры с ID " << apartmentId << " успешно обновлен до " << rating << "." << std::endl;
     }
+
+    // Завершаем работу с запросом и базой данных
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
 }
-void RentalSystem::saveApartmentsToFile(const std::string& filename) const {
-    std::ofstream outFile(filename);
-    if (!outFile) {
-        std::cerr << "Ошибка открытия файла для записи.\n";
-        return;
-    }
-    for (const auto& apartment : apartments) {
-        outFile << apartment.getId() << ","
-            << apartment.getLocation() << ","
-            << apartment.getPrice() << ","
-            << (apartment.isAvailable() ? "1" : "0") << "\n";
-    }
-    outFile.close();
-    std::cout << "Данные о квартирах сохранены в файл " << filename << ".\n";
-}
-void RentalSystem::saveUsersToFile(const std::string& filename) const {
-    std::ofstream outFile(filename);
-    if (!outFile) {
-        std::cerr << "Ошибка открытия файла для записи.\n";
-        return;
-    }
-    for (const auto& user : users) {
-        outFile << user.getName() << "," << user.getEmail() << "\n";
-    }
-    outFile.close();
-    std::cout << "Данные о пользователях сохранены в файл " << filename << ".\n";
-}
-void RentalSystem::loadApartmentsFromFile(const std::string& filename) {
-    std::ifstream inFile(filename);
-    if (!inFile) {
-        std::cerr << "Ошибка открытия файла для чтения.\n";
+
+void RentalSystem::compareApartmentsFromDB(int apartmentId1, int apartmentId2) const {
+    // SQL query to retrieve prices of the two apartments
+    std::string sql = "SELECT id, price FROM apartments WHERE id IN (" + std::to_string(apartmentId1) + ", " + std::to_string(apartmentId2) + ");";
+    sqlite3_stmt* stmt;
+    int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+
+    if (rc != SQLITE_OK) {
+        std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << "\n";
         return;
     }
 
-    apartments.clear(); // Очищаем текущий список квартир
-    std::string line;
-    while (std::getline(inFile, line)) {
-        std::stringstream ss(line);
-        int id;
-        std::string location;
-        double price;
-        bool available;
-        char delimiter;
+    double price1 = 0.0, price2 = 0.0;
+    bool found1 = false, found2 = false;
 
-        if (ss >> id >> delimiter) { // Читаем ID и пропускаем запятую
-            std::getline(ss, location, ','); // Читаем местоположение до запятой
-            ss >> price >> delimiter; // Читаем цену и пропускаем запятую
-            ss >> available; // Читаем доступность
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int id = sqlite3_column_int(stmt, 0);
+        double price = sqlite3_column_double(stmt, 1);
 
-            Apartment apartment(id, location, price, available);
-            apartments.push_back(apartment); // Добавляем квартиру в список
+        if (id == apartmentId1) {
+            price1 = price;
+            found1 = true;
+        }
+        else if (id == apartmentId2) {
+            price2 = price;
+            found2 = true;
         }
     }
-    inFile.close();
-    std::cout << "Данные о квартирах загружены из файла " << filename << ".\n";
-}
-void RentalSystem::loadUsersFromFile(const std::string& filename) {
-    std::ifstream inFile(filename);
-    if (!inFile) {
-        std::cerr << "Ошибка открытия файла для чтения.\n";
-        return;
+
+    sqlite3_finalize(stmt);
+
+    // Check if both apartments were found
+    if (!found1) {
+        std::cout << "Квартира с ID " << apartmentId1 << " не найдена.\n";
+    }
+    if (!found2) {
+        std::cout << "Квартира с ID " << apartmentId2 << " не найдена.\n";
     }
 
-    users.clear(); // Очищаем текущий список пользователей
-    std::string line;
-    while (std::getline(inFile, line)) {
-        std::stringstream ss(line);
-        std::string name;
-        std::string email;
-        std::getline(ss, name, ','); // Читаем имя до запятой
-        std::getline(ss, email);     // Читаем email до конца строки
+    // Compare prices if both apartments are found
+    if (found1 && found2) {
+        std::cout << "Сравнение квартир:\n";
+        std::cout << "Квартира ID " << apartmentId1 << " стоит " << price1 << " долларов.\n";
+        std::cout << "Квартира ID " << apartmentId2 << " стоит " << price2 << " долларов.\n";
 
-        User user(name, email);
-        users.push_back(user); // Добавляем пользователя в список
+        if (price1 < price2) {
+            std::cout << "Квартира с ID " << apartmentId1 << " дешевле.\n";
+        }
+        else if (price1 > price2) {
+            std::cout << "Квартира с ID " << apartmentId2 << " дешевле.\n";
+        }
+        else {
+            std::cout << "Обе квартиры стоят одинаково.\n";
+        }
     }
-    inFile.close();
-    std::cout << "Данные о пользователях загружены из файла " << filename << ".\n";
 }

@@ -2,7 +2,7 @@
 #define APARTMENT_H
 
 #include <string>
-#include <compare>  // Для оператора <=> в C++20
+#include <compare>  
 #include <iostream>
 
 class Apartment {

@@ -5,33 +5,38 @@
 #include <string>
 #include "Apartment.h"
 #include "User.h"
+#include <sqlite3.h>
 
 class RentalSystem {
 public:
-    void addApartment(const Apartment& apartment);
-    void displayAvailableApartments() const;
-    bool rentApartment(int apartmentId, const User& user, double rate, const std::string& currency); // ƒобавили параметры валюты
-    bool returnApartment(int apartmentId);
-    bool removeApartment(int apartmentId);
+    RentalSystem();
+    ~RentalSystem();
 
-    void rateApartment(int apartmentId, double rating); //  метод дл€ установки рейтинга
+    sqlite3* db; // указатель на базу данных
 
-    void addUser(const User& user);
-    void displayUsers() const;
+    void addApartmentToDB(const Apartment& apartment);
+    void displayAvailableApartmentsFromDB() const;
+    bool rentApartmentFromDB(int apartmentId, const User& user);
+    bool returnApartmentToDB(int apartmentId);
+    bool removeApartmentFromDB(int apartmentId);
 
-    double getCurrencyRate(std::string_view currency) const; // ћетод дл€ получени€ курса валюты
-    double calculateRentalCost(int apartmentId, int rentalDays) const;
-    void compareApartments(int apartmentId1, int apartmentId2) const;
+    void rateApartmentInDB(int apartmentId, double rating); //  метод дл€ установки рейтинга
+
+    void addUserToDB(const User& user);
+    void displayUsersFromDB() const;
+
+    double getCurrencyRate(std::string_view currency) const;
+    double calculateRentalCostFromDB(int apartmentId, int rentalDays) const;
+    void compareApartmentsFromDB(int apartmentId1, int apartmentId2) const;
     
-    void saveApartmentsToFile(const std::string& filename) const; // запись в файл квартир
-    void saveUsersToFile(const std::string& filename) const; // запись в файл пользователей
-    void loadApartmentsFromFile(const std::string& filename); // чтение в файл квартир
-    void loadUsersFromFile(const std::string& filename); // чтение в файл пользователей
-
 
 private:
     std::vector<Apartment> apartments;
     std::vector<User> users;
+
+    void openDB();
+    void closeDB();
+    void executeSQL(const std::string& sql) const;
 };
 
 #endif // RENTALSYSTEM_H
