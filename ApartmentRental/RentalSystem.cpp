@@ -263,15 +263,16 @@ void RentalSystem::compareApartmentsFromDB(int apartmentId1, int apartmentId2) c
     // SQL query to retrieve prices of the two apartments
     std::string sql = "SELECT id, price FROM apartments WHERE id IN (" + std::to_string(apartmentId1) + ", " + std::to_string(apartmentId2) + ");";
     sqlite3_stmt* stmt;
-    int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
+    if (int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); rc != SQLITE_OK) {
         std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << "\n";
         return;
     }
 
-    double price1 = 0.0, price2 = 0.0;
-    bool found1 = false, found2 = false;
+    double price1 = 0.0;
+    double price2 = 0.0;
+    bool found1 = false;
+    bool found2 = false;
 
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         int id = sqlite3_column_int(stmt, 0);
