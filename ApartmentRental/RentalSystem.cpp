@@ -117,7 +117,7 @@ bool RentalSystem::rentApartmentFromDB(int apartmentId, const User& user) {
         }
 
         // Обновление статуса доступности квартиры
-        std::string updateSQL = "UPDATE apartments SET available = 0 WHERE id = " + std::to_string(apartmentId) + ";";
+        std::string updateSQL = std::format("UPDATE apartments SET available = 0 WHERE id = {};", apartmentId);
         executeSQL(updateSQL);
 
         // Добавление пользователя в базу данных
@@ -137,7 +137,7 @@ bool RentalSystem::rentApartmentFromDB(int apartmentId, const User& user) {
 
 // Возврат квартиры
 bool RentalSystem::returnApartmentToDB(int apartmentId) {
-    std::string updateSQL = "UPDATE apartments SET available = 1 WHERE id = " + std::to_string(apartmentId) + ";";
+    std::string updateSQL = std::format("UPDATE apartments SET available = 1 WHERE id = {};", apartmentId);
     executeSQL(updateSQL);
     std::cout << "Квартира с ID " << apartmentId << " была возвращена.\n";
     return true;
@@ -145,7 +145,7 @@ bool RentalSystem::returnApartmentToDB(int apartmentId) {
 
 // Удаление квартиры из базы данных
 bool RentalSystem::removeApartmentFromDB(int apartmentId) {
-    std::string deleteSQL = "DELETE FROM apartments WHERE id = " + std::to_string(apartmentId) + ";";
+    std::string deleteSQL = std::format("DELETE FROM apartments WHERE id = {};", apartmentId);
     executeSQL(deleteSQL);
     std::cout << "Квартира с ID " << apartmentId << " была удалена.\n";
     return true;
