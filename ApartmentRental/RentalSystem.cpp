@@ -79,7 +79,7 @@ void RentalSystem::addApartmentToDB(const Apartment& apartment) {
 void RentalSystem::displayAvailableApartmentsFromDB() const {
     std::string sql = "SELECT id, location, price FROM apartments WHERE available = 1;";
     sqlite3_stmt* stmt;
-    int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    /*int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);*/
 
     if (int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); rc != SQLITE_OK) {
         std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << "\n";
@@ -102,9 +102,8 @@ bool RentalSystem::rentApartmentFromDB(int apartmentId, const User& user) {
     // Проверка доступности квартиры
     std::string checkAvailabilitySQL = "SELECT price, available FROM apartments WHERE id = " + std::to_string(apartmentId) + ";";
     sqlite3_stmt* stmt;
-    int rc = sqlite3_prepare_v2(db, checkAvailabilitySQL.c_str(), -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
+    if (int rc = sqlite3_prepare_v2(db, checkAvailabilitySQL.c_str(), -1, &stmt, nullptr); rc != SQLITE_OK) {
         std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << "\n";
         return false;
     }
@@ -166,9 +165,8 @@ void RentalSystem::addUserToDB(const User& user) {
 void RentalSystem::displayUsersFromDB() const {
     std::string sql = "SELECT name, email FROM users;";
     sqlite3_stmt* stmt;
-    int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
+    if (int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); rc != SQLITE_OK) {
         std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << "\n";
         return;
     }
