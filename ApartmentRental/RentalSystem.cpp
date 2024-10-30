@@ -25,8 +25,7 @@ void RentalSystem::executeSQL(const std::string& sql) const {
 
 // Открытие базы данных SQLite
 void RentalSystem::openDB() {
-    int rc = sqlite3_open("rental_system.db", &db);
-    if (rc) {
+    if (int rc = sqlite3_open("rental_system.db", &db); rc) {
         std::cerr << "Ошибка открытия базы данных: " << sqlite3_errmsg(db) << "\n";
     }
     else {
@@ -82,7 +81,7 @@ void RentalSystem::displayAvailableApartmentsFromDB() const {
     sqlite3_stmt* stmt;
     int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
 
-    if (rc != SQLITE_OK) {
+    if (int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); rc != SQLITE_OK) {
         std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << "\n";
         return;
     }
