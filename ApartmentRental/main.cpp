@@ -197,7 +197,8 @@ void handleRateApartment(RentalSystem& system) {
 }
 
 void handleAddUser(RentalSystem& system) {
-    std::string userName, userEmail;
+    std::string userName;
+    std:: string userEmail;
     std::cout << "Введите имя пользователя: ";
     std::cin.ignore(); // очистка буфера
     std::getline(std::cin, userName);
@@ -214,7 +215,8 @@ void handleDisplayUsers(RentalSystem& system) {
 
 // Новая функция для сравнения квартир
 void handleCompareApartments(RentalSystem& system) {
-    int apartmentId1, apartmentId2;
+    int apartmentId1;
+    int apartmentId2;
     std::cout << "Введите ID первой квартиры для сравнения: ";
     std::cin >> apartmentId1;
     std::cout << "Введите ID второй квартиры для сравнения: ";
