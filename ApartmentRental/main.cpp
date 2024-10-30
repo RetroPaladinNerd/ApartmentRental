@@ -7,14 +7,14 @@ void displayMainMenu();
 void displayApartmentMenu();
 void displayUserMenu();
 void handleAddApartment(RentalSystem& system);
-void handleDisplayApartments(RentalSystem& system);
+void handleDisplayApartments(const RentalSystem& system);
 void handleRentApartment(RentalSystem& system);
 void handleReturnApartment(RentalSystem& system);
 void handleRemoveApartment(RentalSystem& system);
 void handleRateApartment(RentalSystem& system);
 void handleAddUser(RentalSystem& system);
-void handleDisplayUsers(RentalSystem& system);
-void handleCompareApartments(RentalSystem& system); 
+void handleDisplayUsers(const RentalSystem& system);
+void handleCompareApartments(const RentalSystem& system); 
 
 int main() {
     std::system("chcp 1251");
@@ -149,13 +149,14 @@ void handleAddApartment(RentalSystem& system) {
     system.addApartmentToDB(apartment);
 }
 
-void handleDisplayApartments(RentalSystem& system) {
+void handleDisplayApartments(const RentalSystem& system) {
     system.displayAvailableApartmentsFromDB();
 }
 
 void handleRentApartment(RentalSystem& system) {
     int apartmentId;
-    std::string userName, userEmail;
+    std::string userName;
+    std:: string userEmail;
 
     std::cout << "Введите ID квартиры для аренды: ";
     std::cin >> apartmentId;
@@ -209,12 +210,12 @@ void handleAddUser(RentalSystem& system) {
     system.addUserToDB(user);
 }
 
-void handleDisplayUsers(RentalSystem& system) {
+void handleDisplayUsers(const RentalSystem& system) {
     system.displayUsersFromDB();
 }
 
 // Новая функция для сравнения квартир
-void handleCompareApartments(RentalSystem& system) {
+void handleCompareApartments(const RentalSystem& system) {
     int apartmentId1;
     int apartmentId2;
     std::cout << "Введите ID первой квартиры для сравнения: ";
