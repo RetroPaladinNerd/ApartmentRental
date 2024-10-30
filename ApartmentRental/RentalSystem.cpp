@@ -172,8 +172,8 @@ void RentalSystem::displayUsersFromDB() const {
 
     std::cout << "Пользователи:\n";
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        const char* name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-        const char* email = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        auto name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+        auto email = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
         std::cout << "Имя: " << name << ", Email: " << email << "\n";
     }
 
