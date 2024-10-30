@@ -79,7 +79,6 @@ void RentalSystem::addApartmentToDB(const Apartment& apartment) {
 void RentalSystem::displayAvailableApartmentsFromDB() const {
     std::string sql = "SELECT id, location, price FROM apartments WHERE available = 1;";
     sqlite3_stmt* stmt;
-    /*int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);*/
 
     if (int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); rc != SQLITE_OK) {
         std::cerr << "Ошибка выполнения запроса: " << sqlite3_errmsg(db) << "\n";
@@ -89,7 +88,7 @@ void RentalSystem::displayAvailableApartmentsFromDB() const {
     std::cout << "Доступные квартиры:\n";
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         int id = sqlite3_column_int(stmt, 0);
-        const char* location = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        auto location = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
         double price = sqlite3_column_double(stmt, 2);
 
         std::cout << "ID: " << id << ", Местоположение: " << location << ", Цена: $" << price << "\n";
@@ -188,7 +187,7 @@ void RentalSystem::rateApartmentInDB(int apartmentId, double rating) {
     }
 
     sqlite3* db;
-    /*char* errorMessage = nullptr;*/
+    
 
     // Открываем соединение с базой данных
     int rc = sqlite3_open("rental_system.db", &db);
