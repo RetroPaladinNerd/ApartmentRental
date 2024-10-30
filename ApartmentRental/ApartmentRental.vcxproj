@@ -27,6 +27,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Apartment.h" />
+    <ClInclude Include="Comparable.h" />
+    <ClInclude Include="DatabaseManager.h" />
     <ClInclude Include="RentalSystem.h" />
     <ClInclude Include="SQLite\sqlite3.h" />
   </ItemGroup>

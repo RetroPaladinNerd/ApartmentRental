@@ -14,7 +14,7 @@ void handleRemoveApartment(RentalSystem& system);
 void handleRateApartment(RentalSystem& system);
 void handleAddUser(RentalSystem& system);
 void handleDisplayUsers(RentalSystem& system);
-void handleCompareApartments(RentalSystem& system); // Новая функция
+void handleCompareApartments(RentalSystem& system); 
 
 int main() {
     std::system("chcp 1251");

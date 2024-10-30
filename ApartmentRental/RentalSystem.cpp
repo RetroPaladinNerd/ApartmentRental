@@ -75,6 +75,7 @@ void RentalSystem::addApartmentToDB(const Apartment& apartment) {
     std::cout << " вартира добавлена в базу данных. \n";
 }
 
+
 // ќтображение доступных квартир из базы данных
 void RentalSystem::displayAvailableApartmentsFromDB() const {
     std::string sql = "SELECT id, location, price FROM apartments WHERE available = 1;";
@@ -261,6 +262,7 @@ void RentalSystem::rateApartmentInDB(int apartmentId, double rating) {
     sqlite3_close(db);
 }
 
+
 void RentalSystem::compareApartmentsFromDB(int apartmentId1, int apartmentId2) const {
     // SQL query to retrieve prices of the two apartments
     std::string sql = "SELECT id, price FROM apartments WHERE id IN (" + std::to_string(apartmentId1) + ", " + std::to_string(apartmentId2) + ");";
@@ -291,7 +293,7 @@ void RentalSystem::compareApartmentsFromDB(int apartmentId1, int apartmentId2) c
 
     sqlite3_finalize(stmt);
 
-    // Check if both apartments were found
+    
     if (!found1) {
         std::cout << " вартира с ID " << apartmentId1 << " не найдена.\n";
     }
@@ -299,7 +301,7 @@ void RentalSystem::compareApartmentsFromDB(int apartmentId1, int apartmentId2) c
         std::cout << " вартира с ID " << apartmentId2 << " не найдена.\n";
     }
 
-    // Compare prices if both apartments are found
+    
     if (found1 && found2) {
         std::cout << "—равнение квартир:\n";
         std::cout << " вартира ID " << apartmentId1 << " стоит " << price1 << " долларов.\n";
