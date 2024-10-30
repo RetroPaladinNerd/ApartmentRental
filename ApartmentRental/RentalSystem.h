@@ -101,7 +101,7 @@
 class RentalSystem : public DatabaseManager, public Comparable {
 public:
     RentalSystem();
-    virtual ~RentalSystem();
+    ~RentalSystem() final;
 
     // Реализация методов DatabaseManager
     virtual void openDB() override;
