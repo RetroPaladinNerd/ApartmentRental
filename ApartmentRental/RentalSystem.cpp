@@ -110,8 +110,7 @@ bool RentalSystem::rentApartmentFromDB(int apartmentId, const User& user) {
 
     if (sqlite3_step(stmt) == SQLITE_ROW) {
         double price = sqlite3_column_double(stmt, 0);
-        int available = sqlite3_column_int(stmt, 1);
-        if (available == 0) {
+        if (int available = sqlite3_column_int(stmt, 1); available == 0) {
             std::cout << " вартира с ID " << apartmentId << " недоступна.\n";
             sqlite3_finalize(stmt);
             return false;
@@ -189,7 +188,7 @@ void RentalSystem::rateApartmentInDB(int apartmentId, double rating) {
     }
 
     sqlite3* db;
-    char* errorMessage = nullptr;
+    /*char* errorMessage = nullptr;*/
 
     // ќткрываем соединение с базой данных
     int rc = sqlite3_open("rental_system.db", &db);
