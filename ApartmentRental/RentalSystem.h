@@ -14,6 +14,19 @@ public:
     RentalSystem();
     ~RentalSystem() final;
 
+    // Конструктор копирования
+    RentalSystem(const RentalSystem& other);          // Объявление конструктора копирования
+
+    // Оператор присваивания копий
+    RentalSystem& operator=(const RentalSystem& other); // Объявление оператора присваивания копий
+
+    // Конструктор перемещения
+    RentalSystem(RentalSystem&& other) noexcept;      // Объявление конструктора перемещения
+
+    // Оператор присваивания перемещения
+    RentalSystem& operator=(RentalSystem&& other) noexcept; // Объявление оператора присваивания перемещения
+
+
     // Реализация методов DatabaseManager
      void openDB() override;
      void closeDB() override;

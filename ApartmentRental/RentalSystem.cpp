@@ -14,6 +14,58 @@ RentalSystem::~RentalSystem() {
     closeDB();
 }
 
+// Конструктор копирования
+RentalSystem::RentalSystem(const RentalSystem& other)
+    : db(nullptr), apartments(other.apartments), users(other.users) {
+    if (other.db) {
+        // Здесь можно реализовать логику копирования соединения с базой данных, если необходимо
+        // Например, открытие нового соединения
+        sqlite3_open("database_path", &db); // Замените на фактический путь к базе данных
+        // Копируйте другие ресурсы, если требуется
+    }
+}
+
+// Оператор присваивания копий
+RentalSystem& RentalSystem::operator=(const RentalSystem& other) {
+    if (this != &other) {
+        closeDB(); // Освобождаем текущие ресурсы
+
+        // Копируем данные
+        apartments = other.apartments;
+        users = other.users;
+
+        if (other.db) {
+            // Здесь можно реализовать логику копирования соединения с базой данных, если необходимо
+            sqlite3_open("database_path", &db); // Замените на фактический путь к базе данных
+        }
+        else {
+            db = nullptr; // Убедитесь, что db корректно инициализирован
+        }
+    }
+    return *this;
+}
+
+// Конструктор перемещения
+RentalSystem::RentalSystem(RentalSystem&& other) noexcept
+    : db(other.db), apartments(std::move(other.apartments)), users(std::move(other.users)) {
+    other.db = nullptr; // Оставляем перемещенный объект в корректном состоянии
+}
+
+// Оператор присваивания перемещения
+RentalSystem& RentalSystem::operator=(RentalSystem&& other) noexcept {
+    if (this != &other) {
+        closeDB(); // Освобождаем текущие ресурсы
+
+        // Перемещаем данные
+        db = other.db;
+        apartments = std::move(other.apartments);
+        users = std::move(other.users);
+
+        other.db = nullptr; // Оставляем перемещенный объект в корректном состоянии
+    }
+    return *this;
+}
+
 // Выполнение SQL-запроса
 void RentalSystem::executeSQL(const std::string& sql) const {
     char* errMsg = nullptr;
