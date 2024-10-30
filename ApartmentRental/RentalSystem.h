@@ -104,12 +104,12 @@ public:
     ~RentalSystem() final;
 
     // Реализация методов DatabaseManager
-    virtual void openDB() override;
-    virtual void closeDB() override;
-    virtual void executeSQL(const std::string& sql) const override;
+     void openDB() override;
+     void closeDB() override;
+     void executeSQL(const std::string& sql) const override;
 
     // Реализация методов Comparable
-    virtual void compareApartmentsFromDB(int apartmentId1, int apartmentId2) const override;
+     void compareApartmentsFromDB(int apartmentId1, int apartmentId2) const override;
 
     // Методы, связанные с функциональностью аренды
     virtual void addApartmentToDB(const Apartment& apartment);
