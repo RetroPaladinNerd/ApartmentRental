@@ -187,9 +187,6 @@ void RentalSystem::rateApartmentInDB(int apartmentId, double rating) {
         return;
     }
 
-    sqlite3* db;
-    
-
     // Открываем соединение с базой данных
     int rc = sqlite3_open("rental_system.db", &db);
     if (rc) {
