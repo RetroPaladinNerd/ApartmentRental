@@ -33,7 +33,7 @@ public:
     virtual void addUserToDB(const User& user);
     virtual void displayUsersFromDB() const;
 
-protected:
+private:
     sqlite3* db;  // указатель на базу данных
     std::vector<Apartment> apartments;
     std::vector<User> users;
