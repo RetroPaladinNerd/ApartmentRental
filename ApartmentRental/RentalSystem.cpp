@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <format>
 
 // Конструктор: открытие базы данных
 RentalSystem::RentalSystem() {
@@ -99,7 +100,7 @@ void RentalSystem::displayAvailableApartmentsFromDB() const {
 
 bool RentalSystem::rentApartmentFromDB(int apartmentId, const User& user) {
     // Проверка доступности квартиры
-    std::string checkAvailabilitySQL = "SELECT price, available FROM apartments WHERE id = " + std::to_string(apartmentId) + ";";
+    std::string checkAvailabilitySQL = std::format("SELECT price, available FROM apartments WHERE id = {};", apartmentId);
     sqlite3_stmt* stmt;
 
     if (int rc = sqlite3_prepare_v2(db, checkAvailabilitySQL.c_str(), -1, &stmt, nullptr); rc != SQLITE_OK) {
