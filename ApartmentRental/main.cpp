@@ -3,6 +3,7 @@
 #include "RentalSystem.h"
 #include "User.h"
 
+//управление меню
 void displayMainMenu();
 void displayApartmentMenu();
 void displayUserMenu();
@@ -14,7 +15,10 @@ void handleRemoveApartment(RentalSystem& system);
 void handleRateApartment(RentalSystem& system);
 void handleAddUser(RentalSystem& system);
 void handleDisplayUsers(const RentalSystem& system);
-void handleCompareApartments(const RentalSystem& system); 
+void handleCompareApartments(const RentalSystem& system);
+void handleApartmentSection(RentalSystem& rentalSystem);
+void handleUserSection(RentalSystem& rentalSystem);
+
 
 int main() {
     std::system("chcp 1251");
@@ -29,78 +33,53 @@ int main() {
         std::cin.ignore(); // очистка буфера
 
         switch (choice) {
-        case 1: {
-            int apartmentChoice;
-            do {
-                displayApartmentMenu();
-                std::cout << "Выберите действие: ";
-                std::cin >> apartmentChoice;
-                std::cin.ignore(); // очистка буфера
-
-                switch (apartmentChoice) {
-                case 1:
-                    handleAddApartment(rentalSystem);
-                    break;
-                case 2:
-                    handleDisplayApartments(rentalSystem);
-                    break;
-                case 3:
-                    handleRentApartment(rentalSystem);
-                    break;
-                case 4:
-                    handleReturnApartment(rentalSystem);
-                    break;
-                case 5:
-                    handleRemoveApartment(rentalSystem);
-                    break;
-                case 6:
-                    handleRateApartment(rentalSystem);
-                    break;
-                case 7: // Новый пункт для сравнения квартир
-                    handleCompareApartments(rentalSystem);
-                    break;
-                case 0:
-                    std::cout << "Возврат в главное меню...\n";
-                    break;
-                default:
-                    std::cout << "Неверный ввод. Пожалуйста, выберите действительный вариант.\n";
-                }
-            } while (apartmentChoice != 0);
-            break;
-        }
-        case 2: {
-            int userChoice;
-            do {
-                displayUserMenu();
-                std::cout << "Выберите действие: ";
-                std::cin >> userChoice;
-                std::cin.ignore(); // очистка буфера
-
-                switch (userChoice) {
-                case 1:
-                    handleAddUser(rentalSystem);
-                    break;
-                case 2:
-                    handleDisplayUsers(rentalSystem);
-                    break;
-                case 0:
-                    std::cout << "Возврат в главное меню...\n";
-                    break;
-                default:
-                    std::cout << "Неверный ввод. Пожалуйста, выберите действительный вариант.\n";
-                }
-            } while (userChoice != 0);
-            break;
-        }
-        case 0:
-            std::cout << "Выход из программы...\n";
-            break;
-        default:
-            std::cout << "Неверный ввод. Пожалуйста, выберите действительный вариант.\n";
+        case 1: handleApartmentSection(rentalSystem); break;
+        case 2: handleUserSection(rentalSystem); break;
+        case 0: std::cout << "Выход из программы...\n"; break;
+        default: std::cout << "Неверный ввод. Пожалуйста, выберите действительный вариант.\n"; break;
         }
     } while (choice != 0);
 
     return 0;
+}
+
+void handleApartmentSection(RentalSystem& rentalSystem) {
+    int apartmentChoice;
+    do {
+        displayApartmentMenu();
+        std::cout << "Выберите действие: ";
+        std::cin >> apartmentChoice;
+        std::cin.ignore(); // очистка буфера
+
+        switch (apartmentChoice) {
+        case 1: handleAddApartment(rentalSystem); break;
+        case 2: handleDisplayApartments(rentalSystem); break;
+        case 3: handleRentApartment(rentalSystem); break;
+        case 4: handleReturnApartment(rentalSystem); break;
+        case 5: handleRemoveApartment(rentalSystem); break;
+        case 6: handleRateApartment(rentalSystem); break;
+        case 7: handleCompareApartments(rentalSystem); break;
+        case 0: std::cout << "Возврат в главное меню...\n"; break;
+        default: std::cout << "Неверный ввод. Пожалуйста, выберите действительный вариант.\n"; break;
+        }
+    } while (apartmentChoice != 0);
+}
+
+void handleUserSection(RentalSystem& rentalSystem) {
+    int userChoice;
+    do {
+        displayUserMenu();
+        std::cout << "Выберите действие: ";
+        std::cin >> userChoice;
+        std::cin.ignore(); // очистка буфера
+
+        switch (userChoice) {
+        case 1: handleAddUser(rentalSystem); break;
+        case 2: handleDisplayUsers(rentalSystem); break;
+        case 0: std::cout << "Возврат в главное меню...\n"; break;
+        default: std::cout << "Неверный ввод. Пожалуйста, выберите действительный вариант.\n"; break;
+        }
+    } while (userChoice != 0);
 }
 
 void displayMainMenu() {
