@@ -258,7 +258,7 @@ void RentalSystem::rateApartmentInDB(int apartmentId, double rating) {
 
 void RentalSystem::compareApartmentsFromDB(int apartmentId1, int apartmentId2) const {
     // SQL query to retrieve prices of the two apartments
-    std::string sql = "SELECT id, price FROM apartments WHERE id IN (" + std::to_string(apartmentId1) + ", " + std::to_string(apartmentId2) + ");";
+    std::string sql = std::format("SELECT id, price FROM apartments WHERE id IN ({}, {});", apartmentId1, apartmentId2);
     sqlite3_stmt* stmt;
 
     if (int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr); rc != SQLITE_OK) {
